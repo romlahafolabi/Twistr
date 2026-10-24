@@ -232,7 +232,7 @@ dialog.tw button{border-radius:999px;padding:9px 16px}
   <p class="hint">Videos are saved in this browser only; clearing site data removes them. The camera turns off after each solve.</p>
   <div id="cameraFrame" style="display:none;overflow:hidden;width:100%;height:260px;border-radius:10px;background:#05060c;margin:8px 0;position:relative"><video id="cameraPreview" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover;transform:scale(1);"></video><span style="position:absolute;left:8px;top:8px;background:#090b18cc;padding:3px 7px;border-radius:6px;font-size:11px">FRAME THE CUBE</span></div><div class="row" style="align-items:center"><button id="zOut" type="button" aria-label="Zoom out">−</button><input id="cameraZoom" type="range" min="1" max="4" step=".1" value="1" style="flex:1" aria-label="Camera zoom"><button id="zIn" type="button" aria-label="Zoom in">+</button><span class="hint" id="zLabel">1.0×</span></div><p class="hint" id="zMode">Zoom is applied once the camera is on.</p>
   <div class="row"><button id="cameraEnable" type="button">Enable camera</button><button id="cameraDisable" type="button" disabled>Turn camera off</button><button id="cameraReview" type="button" disabled>Review last recording</button></div>
-  <p class="hint" id="cameraStatus" role="status">Camera is off. Recording is optional.</p><section style="border-top:1px solid var(--bd);margin-top:12px;padding-top:12px"><h2>Verification</h2><p class="hint">A recording can help you review a solve, but this version does not automatically detect cheating. Reliable AI verification needs a separate computer-vision system.</p><p class="hint" id="verifyStatus">No solve recording submitted for verification.</p></section>
+  <p class="hint" id="cameraStatus" role="status">Camera is off. Recording is optional.</p><section style="border-top:1px solid var(--bd);margin-top:12px;padding-top:12px"><h2>Verification</h2><p class="hint">The camera is to monitor your movement.</p><p class="hint" id="verifyStatus">No solve recording submitted for verification.</p></section>
   <video id="cameraPlayback" controls playsinline style="display:none;width:100%;max-height:240px;object-fit:contain;border-radius:10px;background:#05060c;margin-top:8px"></video>
 </div>
 <p class="hint">Space or tap the time: first press starts inspection, next starts the timer, next stops it. The picture shows how the cube looks after the scramble.</p>
@@ -333,11 +333,11 @@ const fmt=ms=>{const s=ms/1000;return s>=60?Math.floor(s/60)+':'+(s%60).toFixed(
 function tick(){$('time').textContent=fmt(performance.now()-t0);raf=requestAnimationFrame(tick)}
 function startRun(){cancelAnimationFrame(raf);insp=false;tRun=true;setMoves(0);t0=performance.now();curId='r'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);$('time').className='run';beginCameraRecording(curId);tick()}
 function startInsp(){insp=true;const i0=performance.now();$('time').className='insp';(function it(){if(!insp)return;const s=15-(performance.now()-i0)/1000;if(s<=0){startRun();return}$('time').textContent=Math.ceil(s);raf=requestAnimationFrame(it)})()}
-function toggle(){if(insp)startRun();else if(!tRun){if($('insp').checked)startInsp();else startRun()}else stopT()}
+function toggle(){if(isDaily&&!tRun&&!insp&&!camStream){const m='Daily challenge: turn on your camera first (Enable camera on this page).';setCameraStatus(m);toast(m);return}if(insp)startRun();else if(!tRun){if($('insp').checked)startInsp();else startRun()}else stopT()}
 function stopT(){if(!tRun)return;tRun=false;cancelAnimationFrame(raf);endCameraRecording();setTimeout(()=>{if(camStream)$('cameraDisable').click()},700);const pb0=times.length?Math.min(...times):null;const d=performance.now()-t0;$('time').textContent=fmt(d);$('time').classList.remove('run');addRec(d,moves);if(pb0!=null&&d<pb0){const g=ST.get('tw_ghost',{beats:0});g.beats=(g.beats||0)+1;ST.set('tw_ghost',g);toast('Ghost beaten! New personal best. Reward: +100 XP')}if(isDaily){const b=ST.get('cl_d',{});if(b.k!=dkey){ST.set('cl_d',{k:dkey,t:d});submit(d)}showDaily()}stats();if(ST.get('tw_day_start',{}).day!==todayKey())ST.set('tw_day_start',{day:todayKey(),count:times.length-1});renderQuest();renderDaily();renderGhost();newScr()}
 function stats0(){const n=times.length;let h='<span>Solves: '+n+'</span><span>Best: '+fmt(Math.min(...times))+'</span>';
  if(n>=5){const l=times.slice(-5).sort((a,b)=>a-b);h+='<span>Ao5: '+fmt((l[1]+l[2]+l[3])/3)+'</span>'}
- $('stats').innerHTML=h;$('list').innerHTML=times.map((t,i)=>'<li>'+fmt(t)+' · '+mlog[i]+' moves</li>').slice(-8).reverse().join('')}
+ $('stats').innerHTML=h;$('list').innerHTML=times.map((t,i)=>'<li>'+fmt(t)+'</li>').slice(-8).reverse().join('')}
 
 /* wiring */
 $('pad').innerHTML='UDLRFB'.split('').map(f=>`<button data-m="${f}">${f}</button><button data-m="${f}'">${f}’</button>`).join('');
@@ -400,7 +400,7 @@ function renderRecs(){const L=$('list');if(!L)return;drawChart();Object.values(o
  $('recNote').textContent=recs.length?recs.length+' record'+(recs.length>1?'s':'')+' ('+recs.filter(r=>r.dnf).length+' DNF). Saved in this browser only; not shared across devices.':'No records yet.';
  L.innerHTML='';recs.slice().reverse().forEach(r=>{const d=document.createElement('div');d.className='rec';
   const when=r.date?new Date(r.date).toLocaleString():'Date unknown (older record)';
-  d.innerHTML='<div class="top"><b class="'+(r.dnf?'dnf':'')+'">'+(r.dnf?'DNF':fmt(r.t))+'</b><span class="hint">'+(r.dnf?'DNF (was '+fmt(r.t)+') · ':'Completed · ')+(r.moves||0)+' moves · '+when+'</span></div><div class="row"></div><div class="vslot hint">'+(r.video?'':'No video for this record.')+'</div>';
+  d.innerHTML='<div class="top"><b class="'+(r.dnf?'dnf':'')+'">'+(r.dnf?'DNF':fmt(r.t))+'</b><span class="hint">'+(r.dnf?'DNF (was '+fmt(r.t)+') · ':'Completed · ')+when+'</span></div><div class="row"></div><div class="vslot hint">'+(r.video?'':'No video for this record.')+'</div>';
   const row=d.querySelector('.row'),slot=d.querySelector('.vslot');
   const btn=(t,f)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=f;row.appendChild(b);return b};
   btn(r.dnf?'Undo DNF':'Mark DNF',()=>{r.dnf=!r.dnf;syncRecs();stats();renderQuest&&0});
@@ -420,7 +420,7 @@ function theme(n){PAL=TH[n];document.querySelectorAll('.f[data-s]').forEach(f=>f
 function go(p){document.body.dataset.p=p;document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.go==p));zoom=p=='play'?1.35:1;view();upNext();if(p==='quest')renderQuest();if(p==='daily')renderDaily();if(p==='ghost')renderGhost();scrollTo(0,0)}
 document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
 $('logo').onclick=()=>go('home');$('backHome').onclick=()=>go('home');
-$('bDaily').onclick=()=>{go('timer');newScr(DAILY,true);applyScr()};
+$('bDaily').onclick=()=>{go('timer');newScr(DAILY,true);applyScr();if(!camStream)toast('The daily challenge needs your camera on. Enable it before you start.')};
 $('bClr').onclick=()=>{if(!confirm('Delete ALL records and their videos? This cannot be undone.'))return;recs.forEach(r=>{if(r.video)vDel(r.id).catch(()=>{})});cloudClear();recs=[];syncRecs();stats()};
 $('theme').onchange=e=>theme(e.target.value);
 $('spd').oninput=e=>{SPEED=480-e.target.value};
@@ -459,14 +459,36 @@ function questState(){return ST.get(QUEST_KEY,{claimed:[]})}
 const bar=(p,t)=>'<div class="progress-track" style="margin-top:6px"><div class="progress-fill" style="width:'+Math.min(100,p/t*100)+'%"></div></div>';
 function dayStart(){const d=new Date();d.setHours(0,0,0,0);return d.getTime()}
 function todayN(){return recs.filter(r=>!r.dnf&&r.date>=dayStart()).length}
-function newQuest(k){const q=ST.get('tw_q2',{done:0}),L=1+Math.floor((q.done||0)/3),best=times.length?Math.min(...times):null,o={start:Date.now(),best};
- if(k==0)return {...o,type:'solves',target:3+L,xp:50,title:'Solve '+(3+L)+' times',desc:'Record timed solves.'};
- if(k==1)return {...o,type:'pb',target:1,xp:75,title:'Beat your personal best',desc:best==null?'Set a first time, then beat it.':'Finish faster than '+fmt(best)+'.'};
- const thr=best==null?90000:Math.round(best*1.25);return {...o,type:'sub',target:2+Math.floor(L/2),thr,xp:60,title:(2+Math.floor(L/2))+' solves under '+fmt(thr),desc:'Each solve must be faster than '+fmt(thr)+'.'}}
-function qProg(m){const r=recs.filter(x=>!x.dnf&&x.date>=m.start);return m.type=='solves'?r.length:m.type=='pb'?(m.best!=null&&r.some(x=>x.t<m.best)?1:0):r.filter(x=>x.t<m.thr).length}
+const median=a=>{const o=[...a].sort((x,y)=>x-y);return o.length?o[Math.floor(o.length/2)]:null};
+function okRecs(from){return recs.filter(r=>!r.dnf&&(!from||r.date>=from))}
+function ao5min(a){let b=Infinity;for(let i=4;i<a.length;i++){const w=a.slice(i-4,i+1).sort((x,y)=>x-y),m=(w[1]+w[2]+w[3])/3;if(m<b)b=m}return b}
+function mkQuest(type){const q=ST.get('tw_q2',{done:0}),L=1+Math.floor((q.done||0)/3),ok=okRecs(),best=ok.length?Math.min(...ok.map(r=>r.t)):null,ref=median(ok.slice(-10).map(r=>r.t)),o={start:Date.now(),best,ref,type},n3=3+Math.floor(L/2);
+ const g={
+ solves:()=>({target:10+2*L,xp:80,title:'Record '+(10+2*L)+' solves',desc:'Any finished solve counts.'}),
+ pb:()=>({target:1,xp:90,title:'Beat your personal best',desc:'Finish faster than '+fmt(best)+'.'}),
+ sub:()=>{const t=Math.round(ref*.97);return{thr:t,target:n3,xp:90,title:n3+' solves under '+fmt(t),desc:'A little quicker than your recent typical solve.'}},
+ beatbest:()=>{const t=Math.round(best*.97);return{thr:t,target:1,xp:120,title:'Break '+fmt(t),desc:'3% faster than your best.'}},
+ close:()=>{const t=Math.round(best*1.1);return{thr:t,target:n3,xp:80,title:n3+' solves within 10% of your best',desc:'Each one under '+fmt(t)+'.'}},
+ nodnf:()=>({target:5+L,xp:70,title:(5+L)+' solves in a row without a DNF',desc:'Stay clean and steady.'}),
+ faster:()=>({target:3,xp:90,title:'3 solves, each faster than the last',desc:'Build momentum.'}),
+ ao5:()=>{const t=Math.round(ref*.95);return{thr:t,target:1,xp:130,title:'Average of 5 under '+fmt(t),desc:'Five solves in a row; best and worst are dropped.'}},
+ total:()=>{const t=Math.ceil((ok.length+1)/25)*25;return{target:t,xp:100,title:'Reach '+t+' total solves',desc:'Your lifetime count.'}},
+ consistent:()=>({target:1,xp:100,title:'3 steady solves in a row',desc:'Three solves in a row within 10% of each other.'})};
+ return {...o,...g[type]()}}
+function nextQuest(avoid){const pool=okRecs().length<3?['solves','total']:['solves','pb','sub','beatbest','close','nodnf','faster','ao5','total','consistent'],c=pool.filter(t=>!avoid.includes(t)),l=c.length?c:pool;return mkQuest(l[Math.floor(Math.random()*l.length)])}
+function qProg(m){const r=okRecs(m.start).map(x=>x.t),all=recs.filter(x=>x.date>=m.start);switch(m.type){
+ case 'solves':return r.length;case 'total':return okRecs().length;
+ case 'pb':return m.best!=null&&r.some(t=>t<m.best)?1:0;
+ case 'beatbest':return r.some(t=>t<m.thr)?1:0;
+ case 'sub':return r.filter(t=>t<m.thr).length;case 'close':return r.filter(t=>t<=m.thr).length;
+ case 'nodnf':{let b=0,c=0;all.forEach(x=>{c=x.dnf?0:c+1;b=Math.max(b,c)});return b}
+ case 'faster':{let b=r.length?1:0,c=b;for(let i=1;i<r.length;i++){c=r[i]<r[i-1]?c+1:1;b=Math.max(b,c)}return b}
+ case 'ao5':return ao5min(all.map(x=>x.dnf?Infinity:x.t))<m.thr?1:0;
+ case 'consistent':{for(let i=2;i<r.length;i++){const w=r.slice(i-2,i+1);if(Math.max(...w)/Math.min(...w)<=1.1)return 1}return 0}
+ default:return 0}}
 function renderQuest(){
- const q=ST.get('tw_q2',{done:0});q.qs=q.qs||[0,1,2].map(newQuest);
- let again=true;while(again){again=false;q.qs.forEach((m,i)=>{if(qProg(m)>=m.target){q.done=(q.done||0)+1;q.xp=(q.xp||0)+m.xp;ST.set('tw_q2',q);q.qs[i]=newQuest(i);toast('Quest complete: '+m.title+' (+'+m.xp+' XP)');}})}
+ const q=ST.get('tw_q2',{done:0});if(!q.qs){q.qs=[];for(let i=0;i<3;i++)q.qs.push(nextQuest(q.qs.map(x=>x.type)))}
+ let again=true;while(again){again=false;q.qs.forEach((m,i)=>{if(qProg(m)>=m.target){q.done=(q.done||0)+1;q.xp=(q.xp||0)+m.xp;ST.set('tw_q2',q);q.qs[i]=nextQuest([...q.qs.map(x=>x.type),m.type]);toast('Quest complete: '+m.title+' (+'+m.xp+' XP)');}})}
  ST.set('tw_q2',q);typeof cloudPush=='function'&&cloudPush();
  const beats=ST.get('tw_ghost',{beats:0}).beats||0,xp=(q.xp||0)+beats*100,level=1+Math.floor((q.done||0)/3),progress=(q.done||0)%3/3*100;
  ['questLevel','questLevelPage'].forEach(id=>{if($(id))$(id).textContent='LEVEL '+level});
@@ -478,10 +500,10 @@ function renderQuest(){
 }
 function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function dailyState(){const all=ST.get(DAILY_KEY,{}),key=todayKey();if(all.day!==key)return {day:key,done:[]};return all}
-function dailyMissions(){const n=()=>todayN(),g=()=>times.length>0&&Math.min(...times.slice(-3))<=Math.min(...times)*1.1?1:0;return [
- {id:'one',title:'Start the Engine',desc:'Complete one timed solve today.',t:1,p:n},
- {id:'practice',title:'Keep Practising',desc:'Record 3 solves today.',t:3,p:n},
- {id:'ghost',title:'Chase Your Best',desc:'Finish within 10% of your personal best.',t:1,p:g}
+function dailyMissions(){const n=()=>todayN(),g=()=>{const t=recs.filter(r=>!r.dnf&&r.date>=dayStart()).map(r=>r.t);if(!t.length)return 0;const old=recs.filter(r=>!r.dnf&&r.date<dayStart()).map(r=>r.t),all=recs.filter(r=>!r.dnf).map(r=>r.t),base=Math.min(...(old.length?old:all));return Math.min(...t)<=base*1.25?1:0};return [
+ {id:'one',title:'Warm Up',desc:'Complete 3 timed solves today.',t:3,p:n},
+ {id:'practice',title:'Keep Practising',desc:'Complete 5 timed solves today.',t:5,p:n},
+ {id:'ghost',title:'Chase Your Best',desc:'Finish one solve within 25% of your personal best.',t:1,p:g}
 ].map(m=>({...m,done:()=>m.p()>=m.t}))}
 function renderDaily(){
  const s=dailyState(),missions=dailyMissions(),done=new Set(s.done||[]);
@@ -512,7 +534,7 @@ function renderGhost(){
   else if(latest<best*1.1)$('ghostMessage').textContent='You are close to your best. One more run could do it.';
   else $('ghostMessage').textContent='Your best is '+fmt(best)+'. Try another run and see how close you can get.';
  }
- if($('ghostHistory'))$('ghostHistory').innerHTML=times.slice(-6).reverse().map((t,i)=>'<div class="mission-row"><div style="flex:1"><b>Run '+(times.length-i)+'</b><div class="hint">'+(mlog[times.length-1-i]||0)+' moves</div></div><span class="feature-tag">'+fmt(t)+'</span></div>').join('')||'<p class="hint">Your solve history will appear after your first timed run.</p>';
+ if($('ghostHistory'))$('ghostHistory').innerHTML=times.slice(-6).reverse().map((t,i)=>'<div class="mission-row"><div style="flex:1"><b>Run '+(times.length-i)+'</b></div><span class="feature-tag">'+fmt(t)+'</span></div>').join('')||'<p class="hint">Your solve history will appear after your first timed run.</p>';
 }
 $('ghostRefresh').onclick=()=>{renderGhost();renderQuest();renderDaily()};
 
