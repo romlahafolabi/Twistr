@@ -152,13 +152,9 @@ dialog.tw input{display:block;width:100%;margin-top:5px;padding:11px 13px;border
 dialog.tw input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px #9b5cff33}
 dialog.tw button{border-radius:999px;padding:9px 16px}
 .bd{display:inline-block;margin:3px;padding:4px 10px;border-radius:999px;border:1px solid #454071;font-size:12px;opacity:.4}.bd.on{opacity:1;background:linear-gradient(145deg,#33246f,#501c59);color:#fff}#profDlg{width:min(94vw,460px);max-height:90vh;overflow:auto}
-.acct.avatar{width:42px;height:42px;padding:0;display:grid;place-items:center;border-radius:50%}.acct svg{width:22px;height:22px}.acct.on{box-shadow:0 0 0 2px var(--ac)}
-.pavatar{width:76px;height:76px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#33246f,#501c59)}.pavatar svg{width:42px;height:42px}
-.pname{display:flex;gap:12px;align-items:center;justify-content:center;font-size:22px;margin:4px 0}.pname button{padding:5px 12px;font-size:12px}
-.pacts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid #343b64}
-button.danger{border-color:#ff5c6c;color:#ff8a96}button.danger.solid{background:#e0243b;border-color:#e0243b;color:#fff}
+.acct.ico{width:38px;height:38px;padding:0;border-radius:50%;display:grid;place-items:center;font-weight:700}.avatar{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:24px;font-weight:700;background:linear-gradient(145deg,#6a3df0,#d23fa8);color:#fff;flex:none}.danger{border-color:#7a2433!important;color:#ff8a9a!important;background:#2a0f18!important}.danger.solid{background:#c7243f!important;color:#fff!important;border-color:#ff5c78!important}
 </style></head><body data-p="home">
-<header><h1 id="logo" title="Back to home">Twistr</h1><nav id="nav"><button id="backHome" type="button" aria-label="Back to home">← Back to Home</button></nav><button id="acctBtn" type="button" class="acct avatar" aria-label="Account" title="Sign in or log in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></button></header>
+<header><h1 id="logo" title="Back to home">Twistr</h1><nav id="nav"><button id="backHome" type="button" aria-label="Back to home">← Back to Home</button></nav><button id="acctBtn" type="button" class="acct ico" title="Sign in" aria-label="Sign in"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></button></header>
 <div class="pg" id="pg-home"><section class="hero"><div><h2>Twist. Time. <em>Solve.</em></h2><p>Race the clock, solve any cube, learn as you go.</p></div><div class="mini"><div><i></i><i></i><i></i><i></i><i></i><i></i></div></div></section>
 <div class="tiles">
 <button class="tile" data-go="play"><b>Play</b><span>Turn a 3D cube yourself.</span></button>
@@ -244,7 +240,7 @@ button.danger{border-color:#ff5c6c;color:#ff8a96}button.danger.solid{background:
 <div id="chart"></div><h2 style="margin-top:16px">All records</h2><p class="hint" id="recNote"></p><div id="list" class="reclist"></div></section>
 <section class="card" id="scard"><h2>Solver</h2><div id="sv"></div><div hidden><div id="nxt"></div><div id="sol"></div><button id="bStep"></button><button id="bSolve"></button><div id="faceEntry"></div><button id="calcPhysical"></button><button id="resetPhysical"></button><p id="physicalStatus"></p><div id="physicalMoves"></div></div></section>
 </div></main>
-<dialog id="authDlg" class="tw"><h2>Join the <em>race</em></h2><p class="hint">Sign in or create an account to save your solves, keep your quests, and take your place on the daily leaderboard.</p><label class="alab">Email<input id="aEmail" type="email" placeholder="you@example.com" autocomplete="email"></label><label class="alab">Password<input id="aPass" type="password" placeholder="6+ characters" autocomplete="current-password"></label><div class="row" style="margin-top:14px"><button type="button" class="pri" id="aLogin">Log in</button><button type="button" id="aSignup">Create account</button><button type="button" id="aClose">Close</button></div><p style="margin:6px 0 0"><button type="button" id="aForgot" style="border:0;background:none;padding:0;color:#d5c8ff;text-decoration:underline;font-size:13px">Forgot password?</button></p><p class="hint" id="aMsg" role="status"></p></dialog>
+<dialog id="authDlg" class="tw"><h2>Join the <em>race</em></h2><p class="hint">Save your solves, keep your quests, and take your place on the daily leaderboard.</p><label class="alab">Email<input id="aEmail" type="email" placeholder="you@example.com" autocomplete="email"></label><label class="alab">Password<input id="aPass" type="password" placeholder="6+ characters" autocomplete="current-password"></label><div class="row" style="margin-top:14px"><button type="button" class="pri" id="aLogin">Log in</button><button type="button" id="aSignup">Create account</button><button type="button" id="aClose">Close</button></div><p style="margin:6px 0 0"><button type="button" id="aForgot" style="border:0;background:none;padding:0;color:#d5c8ff;text-decoration:underline;font-size:13px">Forgot password?</button></p><p class="hint" id="aMsg" role="status"></p></dialog>
 <dialog id="profDlg" class="tw"><h2>Your <em>profile</em></h2><div id="profBody"></div><div class="row"><button type="button" id="pClose">Close</button></div></dialog>
 <dialog id="recDlg" class="tw"><h2>New <em>password</em></h2><label class="alab">New password<input id="rPass" type="password" placeholder="6+ characters" autocomplete="new-password"></label><div class="row" style="margin-top:14px"><button type="button" class="pri" id="rSave">Save password</button></div><p class="hint" id="rMsg" role="status"></p></dialog>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -327,8 +323,8 @@ let recs=(function(){let r=ST.get('tw_recs',null);if(Array.isArray(r))return r.f
  const t=ST.get('cl_t',[]),m=ST.get('cl_m',[]);return (Array.isArray(t)?t:[]).filter(x=>typeof x==='number').map((x,i)=>({id:'old'+i,t:x,moves:(m&&m[i])||0,date:0,dnf:false,video:false}))})();
 function syncRecs(){typeof cloudPush=='function'&&cloudPush();times=recs.filter(r=>!r.dnf).map(r=>r.t);mlog=recs.filter(r=>!r.dnf).map(r=>r.moves||0);ST.set('tw_recs',recs);ST.set('cl_t',times);ST.set('cl_m',mlog)}
 syncRecs();
-let curId=null,lastRecId=null;const vidIds=new Set();
-function addRec(d,mv){const id=curId||('r'+Date.now().toString(36));curId=null;lastRecId=id;if(recs.some(r=>r.id===id))return;recs.push({id,t:d,moves:mv,date:Date.now(),dnf:false,video:vidIds.has(id)});syncRecs()}
+let curId=null;const vidIds=new Set();
+function addRec(d,mv){const id=curId||('r'+Date.now().toString(36));curId=null;if(recs.some(r=>r.id===id))return;recs.push({id,t:d,moves:mv,date:Date.now(),dnf:false,video:vidIds.has(id)});syncRecs()}
 /* IndexedDB video store */
 const VDB=new Promise((res,rej)=>{try{const q=indexedDB.open('twistr_videos',1);q.onupgradeneeded=()=>q.result.createObjectStore('v');q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)}catch(e){rej(e)}});VDB.catch(()=>{});
 function vTx(m,f){return VDB.then(db=>new Promise((res,rej)=>{const tx=db.transaction('v',m),r=f(tx.objectStore('v'));tx.oncomplete=()=>res(r.result);tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error)}))}
@@ -339,7 +335,7 @@ function tick(){$('time').textContent=fmt(performance.now()-t0);raf=requestAnima
 function startRun(){cancelAnimationFrame(raf);insp=false;tRun=true;setMoves(0);t0=performance.now();curId='r'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);$('time').className='run';beginCameraRecording(curId);tick()}
 function startInsp(){insp=true;const i0=performance.now();$('time').className='insp';(function it(){if(!insp)return;const s=15-(performance.now()-i0)/1000;if(s<=0){startRun();return}$('time').textContent=Math.ceil(s);raf=requestAnimationFrame(it)})()}
 function toggle(){if(isDaily&&!tRun&&!insp&&!camStream){const m='Daily challenge: turn on your camera first (Enable camera on this page).';setCameraStatus(m);toast(m);return}if(insp)startRun();else if(!tRun){if($('insp').checked)startInsp();else startRun()}else stopT()}
-function stopT(){if(!tRun)return;tRun=false;cancelAnimationFrame(raf);endCameraRecording();setTimeout(()=>{if(camStream)$('cameraDisable').click()},700);const pb0=times.length?Math.min(...times):null;const d=performance.now()-t0;$('time').textContent=fmt(d);$('time').classList.remove('run');addRec(d,moves);if(pb0!=null&&d<pb0){const g=ST.get('tw_ghost',{beats:0});g.beats=(g.beats||0)+1;ST.set('tw_ghost',g);toast('Ghost beaten! New personal best. Reward: +100 XP')}if(isDaily){const b=ST.get('cl_d',{});if(b.k!=dkey){ST.set('cl_d',{k:dkey,t:d,id:lastRecId});submit(d)}showDaily()}stats();if(ST.get('tw_day_start',{}).day!==todayKey())ST.set('tw_day_start',{day:todayKey(),count:times.length-1});renderQuest();renderDaily();renderGhost();newScr()}
+function stopT(){if(!tRun)return;tRun=false;cancelAnimationFrame(raf);endCameraRecording();setTimeout(()=>{if(camStream)$('cameraDisable').click()},700);const pb0=times.length?Math.min(...times):null;const d=performance.now()-t0;$('time').textContent=fmt(d);$('time').classList.remove('run');const rid0=curId;addRec(d,moves);if(pb0!=null&&d<pb0){const g=ST.get('tw_ghost',{beats:0});g.beats=(g.beats||0)+1;ST.set('tw_ghost',g);toast('Ghost beaten! New personal best. Reward: +100 XP')}if(isDaily){const b=ST.get('cl_d',{});if(b.k!=dkey){ST.set('cl_d',{k:dkey,t:d,rid:rid0});submit(d)}showDaily()}stats();if(ST.get('tw_day_start',{}).day!==todayKey())ST.set('tw_day_start',{day:todayKey(),count:times.length-1});renderQuest();renderDaily();renderGhost();newScr()}
 function stats0(){const n=times.length;let h='<span>Solves: '+n+'</span><span>Best: '+fmt(Math.min(...times))+'</span>';
  if(n>=5){const l=times.slice(-5).sort((a,b)=>a-b);h+='<span>Ao5: '+fmt((l[1]+l[2]+l[3])/3)+'</span>'}
  $('stats').innerHTML=h;$('list').innerHTML=times.map((t,i)=>'<li>'+fmt(t)+'</li>').slice(-8).reverse().join('')}
@@ -377,46 +373,32 @@ function cloudPush(now){if(!sb||!SUSER||!cloudReady)return;clearTimeout(cloudT);
  const okr=recs.filter(r=>!r.dnf);if(okr.length&&PROF){const a5=bestAo5();await sb.from('bests').upsert({user_id:uid,name:PROF,best:Math.min(...okr.map(r=>r.t)),ao5:isFinite(a5)?a5:null,n:okr.length})}else if(!okr.length)await sb.from('bests').delete().eq('user_id',uid);
  await sb.from('progress').upsert({user_id:uid,data:{q2:ST.get('tw_q2',{done:0}),ghost:ST.get('tw_ghost',{beats:0}),d:ST.get('cl_d',{})}})}catch(e){}},now?0:1500)}
 var PROF=null;
+function clearDaily(){ST.set('cl_d',{});ST.set('cl_lb',ST.get('cl_lb',[]).filter(x=>x.k!=dkey));if(sb&&SUSER)sb.from('scores').delete().eq('user_id',SUSER.id).eq('day',dkey).then(()=>loadBoard());else renderLocalLeaderboard();showDaily()}
+function unrank(r){const d=ST.get('cl_d',{});if(d.k==dkey&&(d.rid===r.id||(!d.rid&&Math.round(d.t)===Math.round(r.t))))clearDaily()}
 function bestAo5(){const a=recs.map(r=>r.dnf?Infinity:r.t);let b=Infinity;for(let i=4;i<a.length;i++){const w=a.slice(i-4,i+1).sort((x,y)=>x-y).slice(1,4),m=(w[0]+w[1]+w[2])/3;if(m<b)b=m}return b}
 function chartSVG(){const r=recs.filter(x=>!x.dnf).slice(-30);if(r.length<2)return '<p class="hint">Record at least 2 solves to see your progress.</p>';const W=320,H=110,mx=Math.max(...r.map(x=>x.t)),mn=Math.min(...r.map(x=>x.t)),sp=(mx-mn)||1,pt=r.map((x,i)=>[8+i*(W-16)/(r.length-1),8+(x.t-mn)/sp*(H-16)]);
  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:420px" role="img" aria-label="Your last ${r.length} solve times"><polyline points="${pt.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ')}" fill="none" stroke="#9b5cff" stroke-width="2.5" stroke-linejoin="round"/>${pt.map(q=>`<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="2.6" fill="#ff4fba"/>`).join('')}</svg><p class="hint">Last ${r.length} solves. A higher point is a faster solve. Best ${fmt(mn)}.</p>`}
 function drawChart(){const e=$('chart');if(e)e.innerHTML='<h2 style="margin-top:16px">Progress</h2>'+chartSVG()}
 function badgeList(){const ok=recs.filter(r=>!r.dnf),b=ok.length?Math.min(...ok.map(r=>r.t)):Infinity,q=ST.get('tw_q2',{done:0}),st=ST.get('tw_daily_streak',{}).streak||0,g=ST.get('tw_ghost',{beats:0}).beats||0;
  return [['First solve',ok.length>=1],['10 solves',ok.length>=10],['100 solves',ok.length>=100],['Under 60s',b<60000],['Under 30s',b<30000],['Ghost beaten',g>=1],['Level 5',1+Math.floor((q.done||0)/3)>=5],['7-day streak',st>=7]]}
-async function loadProfile(){try{const r=await sb.from('profiles').select('username').eq('user_id',SUSER.id).maybeSingle();PROF=r.data?r.data.username:null}catch(e){PROF=null}if(PROF)$('pname').value=PROF;else openProfile(true)}
-const AV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>';
-const escH=x=>String(x).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
-function openProfile(edit){const ok=recs.filter(r=>!r.dnf),q=ST.get('tw_q2',{done:0}),a5=bestAo5(),st=ST.get('tw_daily_streak',{}).streak||0,ed=edit||!PROF;
- $('profBody').innerHTML=`<div class="pavatar">${AV}</div>`+(ed?`<p class="hint">${PROF?'Change your username':'Choose a username for the leaderboards'} (3–16 letters, numbers or _).</p><div class="row"><input id="pUser" maxlength="16" placeholder="Username" value="${escH(PROF||'')}" style="flex:1"><button type="button" class="pri" id="pSave">Save</button>${PROF?'<button type="button" id="pCancel">Cancel</button>':''}</div>`:`<div class="pname"><b>${escH(PROF)}</b><button type="button" id="pEdit">Edit name</button></div>`)+`<p class="hint" id="pMsg" role="status" style="text-align:center">${escH(SUSER&&SUSER.email||'')}</p>
- <p>Level <b>${1+Math.floor((q.done||0)/3)}</b> · ${q.done||0} quests · ${st}-day mission streak</p><p>Solves <b>${ok.length}</b> · Best <b>${ok.length?fmt(Math.min(...ok.map(r=>r.t))):'–'}</b> · Best Ao5 <b>${isFinite(a5)?fmt(a5):'–'}</b></p><div>${badgeList().map(([n,on])=>`<span class="bd${on?' on':''}">${n}</span>`).join('')}</div>${chartSVG()}
- <div class="pacts"><button type="button" id="pOut">Sign out</button><button type="button" class="danger" id="pDel">Delete account</button><button type="button" class="danger solid" id="pRestart">Restart game</button></div>`;
- if(ed){$('pSave').onclick=saveUser;if($('pCancel'))$('pCancel').onclick=()=>openProfile(false)}else $('pEdit').onclick=()=>openProfile(true);
- $('pOut').onclick=()=>{$('profDlg').close();sb&&sb.auth.signOut()};$('pDel').onclick=deleteAccount;$('pRestart').onclick=restartGame;
- if(!$('profDlg').open)$('profDlg').showModal()}
-async function restartGame(){if(!confirm('Restart the whole game? All your solves, quests, streaks and leaderboard entries will be erased. Your account and username stay.'))return;
- const m=$('pMsg');if(m)m.textContent='Restarting…';
- for(const r of recs)if(r.video)try{await vDel(r.id)}catch(e){}
- if(sb&&SUSER)for(const t of ['records','scores','bests','progress'])try{await sb.from(t).delete().eq('user_id',SUSER.id)}catch(e){}
- ['cl_d','cl_lb','cl_m','cl_t','tw_daily_streak','tw_day_start','tw_ghost','tw_q2','tw_recs'].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
- location.reload()}
-async function deleteAccount(){if(!SUSER||!sb)return;if(!confirm('Delete your account and all its data permanently? This cannot be undone.'))return;
- const id=SUSER.id,m=$('pMsg');m.textContent='Deleting…';let bad=false,gone=false;
- for(const t of ['records','scores','bests','progress','profiles'])try{const r=await sb.from(t).delete().eq('user_id',id);if(r.error)bad=true}catch(e){bad=true}
- try{const r=await sb.rpc('delete_user');gone=!r.error}catch(e){}
- for(const r of recs)if(r.video)try{await vDel(r.id)}catch(e){}
- try{localStorage.clear()}catch(e){}
- try{await sb.auth.signOut()}catch(e){}
- alert(gone?'Your account was deleted.':'Your data was deleted and you were signed out.'+(bad?' Some data could not be removed.':'')+' The login itself could not be removed because the delete_user function is not set up yet.');
- location.reload()}
-async function fixBoards(){const b=ST.get('cl_d',{});
- if(b.k==dkey&&!recs.some(r=>!r.dnf&&(b.id?r.id===b.id:r.t===b.t))){
-  ST.set('cl_d',{});ST.set('cl_lb',ST.get('cl_lb',[]).filter(x=>!(x.k===dkey&&x.t===Math.round(b.t))));
-  if(sb&&SUSER)try{await sb.from('scores').delete().eq('user_id',SUSER.id).eq('day',dkey)}catch(e){}
-  showDaily()}
- cloudPush(true);loadBoard();setTimeout(loadBoard,2200)}
+async function loadProfile(){try{const r=await sb.from('profiles').select('username').eq('user_id',SUSER.id).maybeSingle();PROF=r.data?r.data.username:null}catch(e){PROF=null}if(PROF)$('pname').value=PROF;updateAcct();if(!PROF)openProfile(true)}
+var USERSVG='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>',EDITN=false;
+function updateAcct(){const b=$('acctBtn');if(SUSER){b.textContent=((PROF||SUSER.email||'?')[0]||'?').toUpperCase();b.title='Profile';b.setAttribute('aria-label','Open profile')}else{b.innerHTML=USERSVG;b.title='Sign in';b.setAttribute('aria-label','Sign in')}}
+function openProfile(first){EDITN=!!first||!PROF;renderProfile(first);if(!$('profDlg').open)$('profDlg').showModal()}
+function renderProfile(first){if(!SUSER)return;const ok=recs.filter(r=>!r.dnf),q=ST.get('tw_q2',{done:0}),a5=bestAo5(),st=ST.get('tw_daily_streak',{}).streak||0,nm=PROF||'';
+ const head=EDITN?`<p class="hint">${first||!PROF?'Choose a username for the leaderboards (3\u201316 letters, numbers or _).':'Change your username.'}</p><div class="row"><input id="pUser" maxlength="16" placeholder="Username" style="flex:1"><button type="button" class="pri" id="pSave">Save</button>${PROF?'<button type="button" id="pCancel">Cancel</button>':''}</div><p class="hint" id="pMsg" role="status"></p>`:`<div class="row" style="align-items:center;gap:12px"><div class="avatar" id="pAv"></div><div style="flex:1;min-width:0"><div style="font-size:20px;font-weight:700" id="pName"></div><div class="hint" id="pMail"></div></div><button type="button" id="pEdit">Edit name</button></div>`;
+ $('profBody').innerHTML=head+`<p>Level <b>${1+Math.floor((q.done||0)/3)}</b> \u00b7 ${q.done||0} quests \u00b7 ${st}-day mission streak</p><p>Solves <b>${ok.length}</b> \u00b7 Best <b>${ok.length?fmt(Math.min(...ok.map(r=>r.t))):'\u2013'}</b> \u00b7 Best Ao5 <b>${isFinite(a5)?fmt(a5):'\u2013'}</b></p><div>${badgeList().map(([n,on])=>`<span class="bd${on?' on':''}">${n}</span>`).join('')}</div>${chartSVG()}<div class="row" style="margin-top:14px"><button type="button" id="pOut">Sign out</button><button type="button" class="danger" id="pDel">Delete account</button><button type="button" class="danger solid" id="pRst">Restart whole game</button></div>`;
+ if(EDITN){$('pUser').value=nm;$('pSave').onclick=saveUser;if($('pCancel'))$('pCancel').onclick=()=>{EDITN=false;renderProfile()}}else{$('pAv').textContent=(nm||SUSER.email||'?')[0].toUpperCase();$('pName').textContent=nm;$('pMail').textContent=SUSER.email||'';$('pEdit').onclick=()=>{EDITN=true;renderProfile()}}
+ $('pOut').onclick=()=>{$('profDlg').close();sb.auth.signOut()};$('pDel').onclick=deleteAccount;$('pRst').onclick=restartGame}
 async function saveUser(){const m=$('pMsg'),u=$('pUser').value.trim();if(!/^[A-Za-z0-9_]{3,16}$/.test(u)){m.textContent='Use 3\u201316 letters, numbers or underscores.';return}if(!SUSER)return;
  const r=await sb.from('profiles').upsert({user_id:SUSER.id,username:u});if(r.error){m.textContent=r.error.code=='23505'?'That username is taken. Try another.':'Could not save: '+r.error.message;return}
- PROF=u;$('pname').value=u;openProfile(false);toast('Name saved');await sb.from('scores').update({name:u}).eq('user_id',SUSER.id);cloudPush(true);loadBoard()}
+ PROF=u;$('pname').value=u;EDITN=false;updateAcct();renderProfile();toast('Username saved');await sb.from('scores').update({name:u}).eq('user_id',SUSER.id);cloudPush(true);loadBoard();loadAll()}
+function wipeLocal(){recs.forEach(r=>{if(r.video)vDel(r.id).catch(()=>{})});recs=[];ST.set('tw_q2',{done:0});ST.set('tw_ghost',{beats:0});ST.set('cl_d',{});ST.set('tw_daily_streak',{});ST.set('tw_day_start',{});ST.set('cl_lb',[]);syncRecs()}
+async function restartGame(){if(!confirm('Restart the whole game? All your solves, videos, quests, ghost rewards and daily result will be erased. Your account and username stay.'))return;const on=!!(sb&&SUSER);cloudReady=false;
+ if(on){const u=SUSER.id;await Promise.all([sb.from('records').delete().eq('user_id',u),sb.from('scores').delete().eq('user_id',u),sb.from('bests').delete().eq('user_id',u),sb.from('progress').delete().eq('user_id',u)])}
+ wipeLocal();if(on)cloudReady=true;stats();renderQuest();renderDaily();renderGhost();showDaily();loadBoard();loadAll();renderProfile();toast('Game restarted')}
+async function deleteAccount(){if(!sb||!SUSER)return;if(!confirm('Delete your account permanently? Your login, records, scores and profile are removed and this cannot be undone.'))return;cloudReady=false;const r=await sb.rpc('delete_my_account');if(r.error){cloudReady=true;toast('Could not delete the account: '+r.error.message);return}
+ wipeLocal();ST.set('tw_owner',null);await sb.auth.signOut();$('profDlg').close();toast('Your account was deleted')}
 async function loadAll(){if(!sb)return;const r=await sb.from('bests').select('name,best,ao5,user_id').order('best',{ascending:true}).limit(10),o=$('lbAll');if(r.error||!o)return;o.textContent='';r.data.forEach(v=>{const li=document.createElement('li');li.textContent=(v.name||'Player')+' \u2013 '+fmt(v.best)+(v.ao5?' (Ao5 '+fmt(v.ao5)+')':'')+(SUSER&&v.user_id==SUSER.id?' (you)':'');o.appendChild(li)});if(!r.data.length){const li=document.createElement('li');li.textContent='No times yet.';o.appendChild(li)}}
 $('pClose').onclick=()=>$('profDlg').close();
 $('aForgot').onclick=async()=>{const m=$('aMsg'),email=$('aEmail').value.trim();if(!sb||!email){m.textContent='Type your email above first.';return}const r=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});m.textContent=r.error?r.error.message:'If that email has an account, a reset link is on its way.'}
@@ -434,10 +416,10 @@ function renderRecs(){const L=$('list');if(!L)return;drawChart();Object.values(o
   d.innerHTML='<div class="top"><b class="'+(r.dnf?'dnf':'')+'">'+(r.dnf?'DNF':fmt(r.t))+'</b><span class="hint">'+(r.dnf?'DNF (was '+fmt(r.t)+') · ':'Completed · ')+when+'</span></div><div class="row"></div><div class="vslot hint">'+(r.video?'':'No video for this record.')+'</div>';
   const row=d.querySelector('.row'),slot=d.querySelector('.vslot');
   const btn=(t,f)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=f;row.appendChild(b);return b};
-  btn(r.dnf?'Undo DNF':'Mark DNF',()=>{r.dnf=!r.dnf;syncRecs();stats();renderQuest&&0;fixBoards()});
+  btn(r.dnf?'Undo DNF':'Mark DNF',()=>{r.dnf=!r.dnf;if(r.dnf)unrank(r);syncRecs();stats();renderQuest&&0});
   if(r.video){btn('Review video',()=>{vGet(r.id).then(b=>{if(!b){r.video=false;syncRecs();renderRecs();return}slot.innerHTML='';const v=document.createElement('video');v.controls=true;v.playsInline=true;openUrls[r.id]=URL.createObjectURL(b);v.src=openUrls[r.id];slot.appendChild(v);v.play().catch(()=>{})}).catch(()=>{slot.textContent='Video unavailable: could not read browser storage.'})});
    btn('Delete video',()=>{if(confirm('Delete only the video for this record? The time is kept.'))vDel(r.id).catch(()=>{}).then(()=>{r.video=false;syncRecs();renderRecs()})})}
-  btn('Delete record',()=>{if(!confirm('Permanently delete this record'+(r.video?' and its video':'')+'?'))return;recs=recs.filter(x=>x.id!==r.id);cloudDel(r.id);if(r.video)vDel(r.id).catch(()=>{});syncRecs();stats();fixBoards()});
+  btn('Delete record',()=>{if(!confirm('Permanently delete this record'+(r.video?' and its video':'')+'?'))return;unrank(r);recs=recs.filter(x=>x.id!==r.id);cloudDel(r.id);if(r.video)vDel(r.id).catch(()=>{});syncRecs();stats()});
   L.appendChild(d)})}
 function stats(){const n=times.length,f=x=>x==null?'–':fmt(x);
  $('stats').innerHTML=[['Solves',n],['Best',n?fmt(Math.min(...times)):'–'],['Ao5',f(ao(5))],['Ao12',f(ao(12))],['Mean',n?fmt(times.reduce((a,b)=>a+b)/n):'–']].map(([a,b])=>`<div><b>${b}</b><span>${a}</span></div>`).join('');
@@ -452,14 +434,14 @@ function go(p){document.body.dataset.p=p;document.querySelectorAll('#nav button'
 document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
 $('logo').onclick=()=>go('home');$('backHome').onclick=()=>go('home');
 $('bDaily').onclick=()=>{go('timer');newScr(DAILY,true);applyScr();if(!camStream)toast('The daily challenge needs your camera on. Enable it before you start.')};
-$('bClr').onclick=()=>{if(!confirm('Delete ALL records and their videos? This cannot be undone.'))return;recs.forEach(r=>{if(r.video)vDel(r.id).catch(()=>{})});cloudClear();recs=[];syncRecs();stats()};
+$('bClr').onclick=()=>{if(!confirm('Delete ALL records and their videos? This cannot be undone.'))return;recs.forEach(r=>{if(r.video)vDel(r.id).catch(()=>{})});cloudClear();recs=[];clearDaily();syncRecs();stats()};
 $('theme').onchange=e=>theme(e.target.value);
 $('spd').oninput=e=>{SPEED=480-e.target.value};
 $('dscr').textContent=pretty(DAILY.join(' '));
 let LB=null,UID=null;
 const SB_URL='https://rnnxvmncxqoczbhspqpu.supabase.co',SB_KEY='sb_publishable_XUKoZv7t6W-mlNlaoRzevg_KqTwI3bQ';
 var sb=null,SUSER=null;try{sb=supabase.createClient(SB_URL,SB_KEY)}catch(e){}
-async function setUser(u){cloudReady=false;SUSER=u||null;UID=u?u.id:null;$('acctBtn').classList.toggle('on',!!u);$('acctBtn').title=u?'Your profile':'Sign in or log in';
+async function setUser(u){cloudReady=false;SUSER=u||null;UID=u?u.id:null;updateAcct();
  if(u){const ow=ST.get('tw_owner',null);if(ow&&ow!==u.id){recs=[];ST.set('tw_q2',{done:0});ST.set('tw_ghost',{beats:0});ST.set('cl_d',{});syncRecs()}ST.set('tw_owner',u.id);if(!$('pname').value){$('pname').value=(u.email||'Player').split('@')[0].slice(0,16)}await cloudInit();await loadProfile()}else PROF=null;
  loadBoard()}
 async function loadBoard(){if(!sb){$('lbnote').textContent='Online features could not load. Scores are saved on this device only.';renderLocalLeaderboard();return}
