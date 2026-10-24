@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Twistr</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{--bg:#090b18;--card:#12162b;--tx:#f4f5ff;--mut:#a6abc9;--ac:#9b5cff;--bd:#2a3154;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--g1:#33246f;--g2:#501c59;--ac2:#ff4fba;--glass:#12162beF}
+
+:root[data-theme="dark"]{--bg:#090b18;--card:#12162b;--tx:#f4f5ff;--mut:#a6abc9;--ac:#9b5cff;--bd:#2a3154;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{max-width:980px;margin:0 auto 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h1{margin:0;font-size:26px}h2{margin:0 0 8px;font-size:17px}
+header p,.hint{color:var(--mut);margin:4px 0;font-size:13px}
+main{max-width:980px;margin:auto;display:none;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px}
+.col{display:grid;gap:14px;align-content:start}
+@media(max-width:760px){main{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px}
+#scene{height:310px;perspective:900px;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab;overflow:hidden}
+#cube{width:0;height:0;position:relative;transform-style:preserve-3d}
+.cb{position:absolute;left:-32px;top:-32px;width:64px;height:64px;transform-style:preserve-3d}
+.f{position:absolute;inset:0;background:#0d0d0d;backface-visibility:hidden;border-radius:6px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+button{font:inherit;padding:8px 12px;border-radius:9px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);cursor:pointer}
+button:hover{border-color:var(--ac)}button.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
+.pad{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.pad button{padding:8px 0;font-family:ui-monospace,monospace;font-weight:600}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:14px;word-spacing:4px;min-height:22px}
+.net{display:grid;grid-template-columns:repeat(12,1fr);gap:1px;max-width:300px;margin:10px auto}
+.net i{aspect-ratio:1;border-radius:2px;box-shadow:inset 0 0 0 1px #0004}
+#time{font:700 54px/1.1 ui-monospace,Menlo,monospace;text-align:center;cursor:pointer;user-select:none;padding:6px 0}
+#time.run{color:var(--ac)}
+#time.insp{color:#e08a00}
+#facing{display:flex;justify-content:space-between;gap:8px;color:var(--mut);font-size:13px;margin:6px 0}
+#stats{display:flex;gap:16px;justify-content:center;color:var(--mut);font-size:13px}
+ol{margin:8px 0 0;padding-left:22px;color:var(--mut);font-size:13px;columns:2}
+.pg{display:none}
+body[data-p="home"] #pg-home,body[data-p="learn"] #pg-learn,body[data-p="quest"] #pg-quest,body[data-p="daily"] #pg-daily,body[data-p="ghost"] #pg-ghost{display:block}
+body[data-p="play"] main,body[data-p="timer"] main,body[data-p="solve"] main{display:grid}
+body[data-p="play"] .col{display:none}
+body[data-p="play"] main{grid-template-columns:minmax(0,680px);justify-content:center}
+body[data-p="timer"] #scard,body[data-p="solve"] #tcard{display:none}
+body[data-p="timer"] #scene,body[data-p="timer"] #facing,body[data-p="timer"] #pad,body[data-p="timer"] #bScr,body[data-p="timer"] #bRes{display:none}
+body[data-p="play"] #scene{height:470px}
+body[data-p="timer"] #time{font-size:68px}
+.playonly{display:none}body[data-p="play"] .playonly{display:block}
+#pg-home,#pg-learn{max-width:980px;margin:auto}
+.hero{padding:34px 0 20px}.hero h2{font-size:clamp(30px,6vw,46px);margin:0}.hero p{color:var(--mut);font-size:17px;max-width:520px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
+.tile{text-align:left;padding:18px;border-radius:14px;background:var(--card);border:1px solid var(--bd);display:grid;gap:6px}
+.tile b{font-size:19px}.tile span{color:var(--mut);font-size:14px}.tile:hover{transform:translateY(-2px);border-color:var(--ac)}
+.learn{display:grid;gap:14px}
+#nav{display:flex;gap:6px;flex-wrap:wrap}#nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+#logo{cursor:pointer}#nxt{font-weight:600;margin-bottom:6px}
+.steps{columns:1;color:var(--tx);font-size:15px}
+#stats{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+#stats div{text-align:center;background:var(--bg);border-radius:10px;padding:8px 4px}
+#stats b{display:block;font:700 16px ui-monospace,monospace;color:var(--tx)}
+:root{--g1:#33246f;--g2:#501c59;--ac2:#ff4fba;--glass:#12162beF}
+
+:root[data-theme="dark"]{--bg:#090b18;--card:#12162b;--bd:#2a3154;--g1:#33246f;--g2:#501c59;--glass:#12162beF}
+body{font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;background:radial-gradient(circle at 10% -10%,#542acb44,transparent 42%),radial-gradient(circle at 100% 0,#d72b9538,transparent 38%),var(--bg);background-attachment:fixed}
+h1,h2,.tile b{font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:-.02em}
+.mono,#time,#stats b,.pad button{font-family:'JetBrains Mono',ui-monospace,monospace}
+#logo{font-weight:800;font-size:30px;background:linear-gradient(100deg,#b794ff 5%,#52e8ef 52%,#ff5ec4 95%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 26px #9b5cff22}
+.card{background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid #353b66;border-radius:22px;box-shadow:0 12px 40px #0003,0 0 0 1px #9b5cff08}
+button{transition:transform .15s,border-color .2s,box-shadow .2s}button:active{transform:scale(.96)}
+button.pri,#nav button.on{background:linear-gradient(100deg,#8554ff,#d946ef 58%,#ff4fba);border:0;color:#fff;box-shadow:0 6px 22px #9b5cff35}
+.pg,main{animation:rise .5s ease both}@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.hero h2{font-size:clamp(38px,8vw,68px);line-height:1.02;font-weight:800}
+.hero em{font-style:normal;background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tile{backdrop-filter:blur(14px);animation:rise .6s both;transition:transform .2s,box-shadow .2s}
+.tile:nth-child(2){animation-delay:.08s}.tile:nth-child(3){animation-delay:.16s}.tile:nth-child(4){animation-delay:.24s}
+.tile:hover{box-shadow:0 14px 44px #0004,0 0 0 1px var(--ac)}.tile b{font-size:22px}
+#scene{background:radial-gradient(circle at 50% 55%,var(--g1),transparent 68%)}
+#time{text-shadow:0 0 34px var(--g1)}
+#pname{font:inherit;padding:8px 10px;border-radius:9px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+.mini{width:120px;height:120px;perspective:700px;margin:10px 50px 10px 20px;flex:none}
+.mini div{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:spin 10s linear infinite}
+.mini i{position:absolute;inset:0;border-radius:12px;box-shadow:inset 0 0 0 4px #0d0d0d;background-image:linear-gradient(90deg,transparent 31%,#0d0d0d 31% 35%,transparent 35% 65%,#0d0d0d 65% 69%,transparent 69%),linear-gradient(0deg,transparent 31%,#0d0d0d 31% 35%,transparent 35% 65%,#0d0d0d 65% 69%,transparent 69%)}
+@keyframes spin{from{transform:rotateX(-24deg) rotateY(0)}to{transform:rotateX(-24deg) rotateY(360deg)}}
+.mini i:nth-child(1){transform:translateZ(60px);background-color:#1fa64a}
+.mini i:nth-child(2){transform:rotateY(180deg) translateZ(60px);background-color:#1e5fd6}
+.mini i:nth-child(3){transform:rotateY(90deg) translateZ(60px);background-color:#d62d20}
+.mini i:nth-child(4){transform:rotateY(-90deg) translateZ(60px);background-color:#ff8a1f}
+.mini i:nth-child(5){transform:rotateX(90deg) translateZ(60px);background-color:#f4f4f4}
+.mini i:nth-child(6){transform:rotateX(-90deg) translateZ(60px);background-color:#ffd500}
+
+#nav{justify-content:flex-end}
+#backHome{display:none;border-radius:999px;padding:10px 15px;font-weight:700;background:var(--card)}
+body:not([data-p="home"]) #backHome{display:inline-flex;align-items:center;gap:6px}
+body[data-p="home"] #nav{display:none}
+body[data-p="timer"] main{grid-template-columns:minmax(0,680px);justify-content:center}
+body[data-p="timer"] main>section.card{display:none}
+body[data-p="timer"] main>.col{display:grid;grid-template-columns:minmax(0,1fr)}
+body[data-p="timer"] #tcard{display:block}
+body[data-p="timer"] #time{font-size:clamp(56px,10vw,84px)}
+body[data-p="timer"] #net{max-width:270px}
+@media(max-width:760px){
+  header{align-items:center}
+  #backHome{padding:8px 11px;font-size:14px}
+  body[data-p="timer"] main{grid-template-columns:minmax(0,1fr)}
+}
+
+/* Twistr Arcade visual pass */
+:root{color-scheme:dark}
+body{color:var(--tx)}
+button,input,select{accent-color:var(--ac)}
+button{border-color:#343b64;background:#151a33}
+button:hover{box-shadow:0 0 0 1px #9b5cff44,0 5px 20px #0003}
+.tile{background:linear-gradient(145deg,#171c39ee,#11152aee);border-color:#30365e}
+.tile span{color:#b3b8d7}
+.hero p{color:#b3b8d7}
+#scene{border-radius:18px}
+#time{letter-spacing:-.055em;text-shadow:0 0 26px #9b5cff38}
+#time.run{color:#58e8ed;text-shadow:0 0 24px #58e8ed44}
+#time.insp{color:#ffb84d}
+#backHome{background:#151a33;border-color:#373d67}
+.arcade-kicker{font:700 11px 'JetBrains Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#58e8ed}
+.feature-panel{background:linear-gradient(145deg,#171c39f2,#101429f2);border:1px solid #343b66;border-radius:22px;padding:16px;box-shadow:0 12px 34px #0002}
+.feature-panel h2{margin-bottom:6px}
+.feature-panel p{color:var(--mut)}
+.progress-track{height:9px;background:#292e4d;border-radius:99px;overflow:hidden;margin:10px 0}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#58e8ed,#9b5cff,#ff4fba);border-radius:99px;transition:width .35s ease}
+.feature-stat{background:#0b1022;border:1px solid #2a3154;border-radius:14px;padding:10px;text-align:center}
+.feature-stat b{display:block;font:700 20px 'Oxanium',sans-serif;color:#fff}
+.feature-stat span{font-size:12px;color:var(--mut)}
+.mission-row{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid #2a3154}
+.mission-row:last-child{border-bottom:0}
+.mission-row input{margin-top:5px}
+.feature-tag{display:inline-flex;align-items:center;border:1px solid #454071;border-radius:999px;padding:4px 9px;font-size:11px;color:#d5c8ff;background:#282044}
+#pg-home .hero{padding-top:38px}
+#pg-home .hero h2{max-width:650px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+.arcade-kicker{display:none}.feature-tag{font-size:12px;font-weight:500}.hero h2{font-weight:700}.tile b{font-weight:650}
+.camera-box button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:520px){#time{font-size:52px}body{padding:12px}.camera-box{padding:10px}}
+.reclist{display:grid;gap:8px;margin-top:8px}.rec{border:1px solid var(--bd);border-radius:12px;padding:10px;background:#0c1020}.rec .top{display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}.rec b{font-size:18px}.rec .dnf{color:#ff7a8a}.rec .row{margin-top:6px}.rec button{padding:5px 10px;font-size:12px}.rec video{width:100%;max-height:220px;margin-top:8px;border-radius:8px;background:#05060c}
+body[data-p="solve"] main>section.card{display:none}body[data-p="solve"] main{max-width:1100px;grid-template-columns:minmax(0,1fr);justify-content:center}#scard.narrow{max-width:720px;margin:0 auto;width:100%}.learn{max-width:980px;margin-inline:auto}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}.pn{border:1px solid var(--bd);border-radius:12px;padding:10px;min-width:0}.pn h3{margin:0 0 6px;font-size:15px}@media(max-width:760px){.two{grid-template-columns:1fr}}
+.nets{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:min(100%,520px);margin:12px auto}.nf{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:3px;border-radius:6px;background:#0b0e1c}
+.stk{aspect-ratio:1;border:1px solid #000;border-radius:3px;padding:0;min-width:0}.stk:disabled{opacity:1;cursor:default}
+.sw{display:flex;gap:6px;flex-wrap:wrap}.swb{display:flex;align-items:center;gap:6px}.swb i{width:18px;height:18px;border-radius:4px;border:1px solid #000}.swb.on{outline:3px solid #fff}
+.solv{height:300px;overflow:hidden;isolation:isolate;display:flex;align-items:center;justify-content:center;margin:8px 0;position:relative}.chips,.row{position:relative;z-index:2}.chips{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}.chip{padding:3px 8px;border-radius:8px;background:#161b33;font-family:monospace}.chip.cur{background:#8554ff;color:#fff;font-weight:700}.chip.done{opacity:.45}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:10px}.lc{border:1px solid var(--bd);border-radius:12px;padding:8px;text-align:center;background:#0c1020}.c3h{display:flex;justify-content:center;align-items:center;height:132px;overflow:hidden;isolation:isolate}.rp{margin-top:6px;padding:4px 12px;font-size:12px}#c3slot{display:flex;justify-content:center}.lc b{display:block;font-size:17px}.lc span{display:block;color:var(--mut);font-size:12px}
+#nav{margin-left:auto}.acct{margin-left:8px;border-radius:999px;padding:7px 14px;font-weight:600;border-color:#454071;background:linear-gradient(145deg,#33246f,#501c59);color:#fff;max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+dialog.tw{border:1px solid #454071;border-radius:20px;background:linear-gradient(160deg,#1b1740,#12162b 55%,#2a1442);color:var(--tx);padding:22px;width:min(92vw,380px);box-shadow:0 20px 70px #000a,0 0 0 1px #9b5cff33}
+dialog.tw::backdrop{background:#05060ccc;backdrop-filter:blur(5px)}
+dialog.tw h2{font-size:26px;margin:0 0 4px;letter-spacing:-.02em}dialog.tw em{font-style:normal;background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.alab{display:block;margin-top:12px;font-size:12px;color:var(--mut);letter-spacing:.04em;text-transform:uppercase}
+dialog.tw input{display:block;width:100%;margin-top:5px;padding:11px 13px;border-radius:12px;border:1px solid #343b64;background:#0b0e1f;color:var(--tx);font:inherit;text-transform:none;letter-spacing:0}
+dialog.tw input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px #9b5cff33}
+dialog.tw button{border-radius:999px;padding:9px 16px}
+.bd{display:inline-block;margin:3px;padding:4px 10px;border-radius:999px;border:1px solid #454071;font-size:12px;opacity:.4}.bd.on{opacity:1;background:linear-gradient(145deg,#33246f,#501c59);color:#fff}#profDlg{width:min(94vw,460px);max-height:90vh;overflow:auto}
+.acct.avatar{width:42px;height:42px;padding:0;display:grid;place-items:center;border-radius:50%}.acct svg{width:22px;height:22px}.acct.on{box-shadow:0 0 0 2px var(--ac)}
+.pavatar{width:76px;height:76px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#33246f,#501c59)}.pavatar svg{width:42px;height:42px}
+.pname{display:flex;gap:12px;align-items:center;justify-content:center;font-size:22px;margin:4px 0}.pname button{padding:5px 12px;font-size:12px}
+.pacts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid #343b64}
+button.danger{border-color:#ff5c6c;color:#ff8a96}button.danger.solid{background:#e0243b;border-color:#e0243b;color:#fff}
+</style></head><body data-p="home">
+<header><h1 id="logo" title="Back to home">Twistr</h1><nav id="nav"><button id="backHome" type="button" aria-label="Back to home">← Back to Home</button></nav><button id="acctBtn" type="button" class="acct avatar" aria-label="Account" title="Sign in or log in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></button></header>
+<div class="pg" id="pg-home"><section class="hero"><div><h2>Twist. Time. <em>Solve.</em></h2><p>Race the clock, solve any cube, learn as you go.</p></div><div class="mini"><div><i></i><i></i><i></i><i></i><i></i><i></i></div></div></section>
+<div class="tiles">
+<button class="tile" data-go="play"><b>Play</b><span>Turn a 3D cube yourself.</span></button>
+<button class="tile" data-go="timer"><b>Timer</b><span>Time solves and record video.</span></button>
+<button class="tile" data-go="solve"><b>Solve</b><span>Enter colours, get the moves.</span></button>
+<button class="tile" data-go="learn"><b>Learn</b><span>Move notation, shown in 3D.</span></button></div>
+
+<section class="feature-panel" id="questPanel" style="margin:0 0 14px">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:6px">
+    <div><h2>Cube Quest</h2><p style="margin:0">Complete quests to level up.</p></div>
+    <span class="feature-tag" id="questLevel">LEVEL 1</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="questProgress"></div></div>
+  <p class="hint" id="questSummary">Complete your first solve to begin your quest.</p>
+  <div class="row"><button class="pri" data-go="quest">Enter Quest</button><button data-go="daily">Today's Missions</button><button data-go="ghost">Beat Your Ghost</button></div>
+</section>
+<section class="card"><h2>Daily challenge</h2><p class="hint">Same scramble for everyone today.</p><div class="mono" id="dscr"></div><div class="row"><button class="pri" id="bDaily">Take today’s challenge</button><span class="hint" id="dbest"></span></div><p id="dailyComplete" style="display:none;font-weight:700;color:#58e8ed;margin:8px 0 0">Challenge completed!</p><p id="dailyTryAgain" class="hint" style="display:none;margin-top:2px;font-size:12px">You can try again to improve your time.</p><p class="hint" id="hbest"></p></section>
+<section class="card"><h2>Leaderboard · today</h2><p class="hint" id="lbnote">Finish today’s challenge to get on the board.</p><div class="row"><input id="pname" maxlength="16" placeholder="Your name"></div><ol id="lb"></ol></section>
+<section class="card"><h2>All-time leaderboard</h2><p class="hint">Best single solve, with best average of 5.</p><ol id="lbAll"></ol></section></div>
+<div class="pg" id="pg-learn"><div class="learn"><section class="card"><h2>Move notation guide</h2><p class="hint">White on top, green facing you. Press Replay to watch a move again.</p></section><div id="learnRoot"></div></div></div>
+<div class="pg" id="pg-quest"><div class="learn">
+  <section class="feature-panel">
+    <h2 style="font-size:clamp(30px,6vw,44px)">Cube Quest</h2><p>Finish quests to earn XP and levels.</p><div class="row"><span class="feature-tag" id="questLevelPage">LEVEL 1</span><span class="feature-tag" id="questXP">0 XP</span></div>
+    <div class="progress-track"><div class="progress-fill" id="questProgressPage"></div></div>
+    <p id="questDetail" class="hint">Complete missions to earn XP and advance.</p>
+  </section>
+  <section class="feature-panel">
+    <h2>Quest milestones</h2>
+    <div id="questMilestones"></div>
+  </section>
+</div></div>
+<div class="pg" id="pg-daily"><div class="learn">
+  <section class="feature-panel">
+    <h2 style="font-size:clamp(30px,6vw,44px)">Today's Missions</h2><p>Three small goals, reset every day.</p><div class="row"><span class="feature-tag" id="dailyDate"></span><span class="feature-tag" id="dailyStreak">0-day streak</span></div>
+    <div id="dailyMissionList"></div>
+    <div class="progress-track"><div class="progress-fill" id="dailyProgress"></div></div>
+    <p class="hint" id="dailySummary">0 of 3 missions complete</p>
+  </section>
+</div></div>
+<div class="pg" id="pg-ghost"><div class="learn">
+  <section class="feature-panel">
+    <h2 style="font-size:clamp(30px,6vw,44px)">Beat Your Ghost</h2><p>Beat your personal best for a reward.</p><div class="tiles" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+      <div class="feature-stat"><b id="ghostBest">—</b><span>Personal best</span></div>
+      <div class="feature-stat"><b id="ghostLatest">—</b><span>Latest solve</span></div>
+      <div class="feature-stat"><b id="ghostDelta">—</b><span>Difference</span></div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="ghostProgress"></div></div>
+    <p id="ghostMessage" class="hint">Complete a timed solve to start your race.</p>
+    <div class="row"><button class="pri" data-go="timer">Start a timed solve</button><button id="ghostRefresh">Refresh comparison</button></div>
+  </section>
+  <section class="feature-panel">
+    <h2>Recent times</h2>
+    
+    <div id="ghostHistory"></div>
+  </section>
+</div></div>
+<main>
+<section class="card">
+<div id="scene"><div id="cube"></div></div>
+<div id="facing"><span id="fr"></span><span id="mvs">Moves: 0</span></div>
+<div class="pad" id="pad"></div>
+<div class="row"><button class="pri" id="bScr">Scramble</button><button id="bRes">Reset</button></div>
+<div class="playonly"><div class="row"><label class="hint">Theme <select id="theme"><option>Classic</option><option>Neon</option><option>Pastel</option><option>Retro</option></select></label><label class="hint">Turn speed <input type="range" id="spd" min="80" max="400" value="300"></label></div></div>
+<p class="hint">Drag a sticker to turn that layer, or drag the background to rotate the view. The buttons and keys F B U D L R follow what you see: F is always the face towards you (hold Shift for counter-clockwise).</p>
+</section>
+<div class="col">
+<section class="card" id="tcard"><h2>Timer</h2>
+<div class="mono" id="scr"></div>
+<div class="net" id="net"></div>
+<div id="time">0.00</div>
+<div id="stats"></div>
+<div class="row"><button id="bNew">New scramble</button><button id="bClr">Clear session</button></div>
+<label class="hint"><input type="checkbox" id="insp" checked> Inspection (15 s)</label>
+<div class="camera-box" style="margin-top:14px;padding:12px;border:1px solid var(--bd);border-radius:14px;background:#0c1020">
+  <h2 style="margin-bottom:4px">Solve recording</h2>
+  <p class="hint">Videos are saved in this browser only; clearing site data removes them. The camera turns off after each solve.</p>
+  <div id="cameraFrame" style="display:none;overflow:hidden;width:100%;height:260px;border-radius:10px;background:#05060c;margin:8px 0;position:relative"><video id="cameraPreview" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover;transform:scale(1);"></video><span style="position:absolute;left:8px;top:8px;background:#090b18cc;padding:3px 7px;border-radius:6px;font-size:11px">FRAME THE CUBE</span></div><div class="row" style="align-items:center"><button id="zOut" type="button" aria-label="Zoom out">−</button><input id="cameraZoom" type="range" min="1" max="4" step=".1" value="1" style="flex:1" aria-label="Camera zoom"><button id="zIn" type="button" aria-label="Zoom in">+</button><span class="hint" id="zLabel">1.0×</span></div><p class="hint" id="zMode">Zoom is applied once the camera is on.</p>
+  <div class="row"><button id="cameraEnable" type="button">Enable camera</button><button id="cameraDisable" type="button" disabled>Turn camera off</button><button id="cameraReview" type="button" disabled>Review last recording</button></div>
+  <p class="hint" id="cameraStatus" role="status">Camera is off. Recording is optional.</p><section style="border-top:1px solid var(--bd);margin-top:12px;padding-top:12px"><h2>Verification</h2><p class="hint">The camera is to monitor your movement.</p><p class="hint" id="verifyStatus">No solve recording submitted for verification.</p></section>
+  <video id="cameraPlayback" controls playsinline style="display:none;width:100%;max-height:240px;object-fit:contain;border-radius:10px;background:#05060c;margin-top:8px"></video>
+</div>
+<p class="hint">Space or tap the time: first press starts inspection, next starts the timer, next stops it. The picture shows how the cube looks after the scramble.</p>
+<div id="chart"></div><h2 style="margin-top:16px">All records</h2><p class="hint" id="recNote"></p><div id="list" class="reclist"></div></section>
+<section class="card" id="scard"><h2>Solver</h2><div id="sv"></div><div hidden><div id="nxt"></div><div id="sol"></div><button id="bStep"></button><button id="bSolve"></button><div id="faceEntry"></div><button id="calcPhysical"></button><button id="resetPhysical"></button><p id="physicalStatus"></p><div id="physicalMoves"></div></div></section>
+</div></main>
+<dialog id="authDlg" class="tw"><h2>Join the <em>race</em></h2><p class="hint">Sign in or create an account to save your solves, keep your quests, and take your place on the daily leaderboard.</p><label class="alab">Email<input id="aEmail" type="email" placeholder="you@example.com" autocomplete="email"></label><label class="alab">Password<input id="aPass" type="password" placeholder="6+ characters" autocomplete="current-password"></label><div class="row" style="margin-top:14px"><button type="button" class="pri" id="aLogin">Log in</button><button type="button" id="aSignup">Create account</button><button type="button" id="aClose">Close</button></div><p style="margin:6px 0 0"><button type="button" id="aForgot" style="border:0;background:none;padding:0;color:#d5c8ff;text-decoration:underline;font-size:13px">Forgot password?</button></p><p class="hint" id="aMsg" role="status"></p></dialog>
+<dialog id="profDlg" class="tw"><h2>Your <em>profile</em></h2><div id="profBody"></div><div class="row"><button type="button" id="pClose">Close</button></div></dialog>
+<dialog id="recDlg" class="tw"><h2>New <em>password</em></h2><label class="alab">New password<input id="rPass" type="password" placeholder="6+ characters" autocomplete="new-password"></label><div class="row" style="margin-top:14px"><button type="button" class="pri" id="rSave">Save password</button></div><p class="hint" id="rMsg" role="status"></p></dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cubejs@1.3.2/lib/cube.js"></script><script src="https://cdn.jsdelivr.net/npm/cubejs@1.3.2/lib/solve.js"></script>
+<script>
+const COL={U:'#f4f4f4',D:'#ffd500',R:'#d62d20',L:'#ff8a1f',F:'#1fa64a',B:'#1e5fd6'};
+const HF={};for(const k in COL)HF[COL[k]]=k;let PAL=COL;
+const faceOf=n=>n[0]?(n[0]>0?'R':'L'):n[1]?(n[1]>0?'D':'U'):(n[2]>0?'F':'B');
+const I=[[1,0,0],[0,1,0],[0,0,1]];
+const mul=(a,b)=>a.map(r=>[0,1,2].map(j=>r[0]*b[0][j]+r[1]*b[1][j]+r[2]*b[2][j]));
+const app=(m,v)=>m.map(r=>r[0]*v[0]+r[1]*v[1]+r[2]*v[2]);
+function rotM(ax,k){k=((k%4)+4)%4;const c=[1,0,-1,0][k],s=[0,1,0,-1][k];
+ return ax==0?[[1,0,0],[0,c,-s],[0,s,c]]:ax==1?[[c,0,s],[0,1,0],[-s,0,c]]:[[c,-s,0],[s,c,0],[0,0,1]]}
+const MV={U:[1,-1,-1],D:[1,1,1],R:[0,1,1],L:[0,-1,-1],F:[2,1,1],B:[2,-1,-1],M:[0,0,-1],E:[1,0,1],S:[2,0,1]};
+const qOf=t=>t[1]=="'"?3:t[1]=="2"?2:1;
+const pretty=s=>s.replace(/'/g,'’');
+function newState(){const a=[];for(let x=-1;x<2;x++)for(let y=-1;y<2;y++)for(let z=-1;z<2;z++){if(!x&&!y&&!z)continue;const st=[];[x,y,z].forEach((v,i)=>{if(v){const n=[0,0,0];n[i]=v;st.push({n,c:COL[faceOf(n)]})}});a.push({p:[x,y,z],R:I,st})}return a}
+function apply(S,t){const [ax,l,sg]=MV[t[0]],M=rotM(ax,sg*qOf(t));S.forEach(c=>{if(c.p[ax]==l){c.p=app(M,c.p);c.R=mul(M,c.R)}})}
+function colorAt(S,p,n){for(const c of S)if(c.p[0]==p[0]&&c.p[1]==p[1]&&c.p[2]==p[2])for(const s of c.st){const r=app(c.R,s.n);if(r[0]==n[0]&&r[1]==n[1]&&r[2]==n[2])return s.c}return '#222'}
+const NET=[[3,0,[0,-1,0],(r,c)=>[c-1,-1,r-1]],[0,3,[-1,0,0],(r,c)=>[-1,r-1,c-1]],[3,3,[0,0,1],(r,c)=>[c-1,r-1,1]],[6,3,[1,0,0],(r,c)=>[1,r-1,1-c]],[9,3,[0,0,-1],(r,c)=>[1-c,r-1,-1]],[3,6,[0,1,0],(r,c)=>[c-1,1,1-r]]];
+function netHTML(S){let h='';NET.forEach(([gx,gy,n,fn])=>{for(let r=0;r<3;r++)for(let c=0;c<3;c++)h+=`<i style="grid-column:${gx+c+1};grid-row:${gy+r+1};background:${PAL[HF[colorAt(S,fn(r,c),n)]]||'#222'}"></i>`});return h}
+function isSolved(S){return NET.every(([,,n,fn])=>{const f=colorAt(S,fn(0,0),n);for(let r=0;r<3;r++)for(let c=0;c<3;c++)if(colorAt(S,fn(r,c),n)!=f)return false;return true})}
+
+/* 3D cube */
+const $=id=>document.getElementById(id);
+const cube=$('cube'),LIVE=newState(),SZ=64,H=SZ/2;
+const FT={F:`translateZ(${H}px)`,B:`rotateY(180deg) translateZ(${H}px)`,R:`rotateY(90deg) translateZ(${H}px)`,L:`rotateY(-90deg) translateZ(${H}px)`,U:`rotateX(90deg) translateZ(${H}px)`,D:`rotateX(-90deg) translateZ(${H}px)`};
+function place(c,pre=''){const R=c.R;c.el.style.transform=`${pre}matrix3d(${R[0][0]},${R[1][0]},${R[2][0]},0,${R[0][1]},${R[1][1]},${R[2][1]},0,${R[0][2]},${R[1][2]},${R[2][2]},0,${c.p[0]*SZ},${c.p[1]*SZ},${c.p[2]*SZ},1)`}
+LIVE.forEach((c,ci)=>{const e=document.createElement('div');e.className='cb';for(const k in FT){const f=document.createElement('div');f.className='f';f.style.transform=FT[k];const s=c.st.find(s=>faceOf(s.n)==k);if(s){f.style.background=s.c;f.dataset.s=1;f.dataset.i=ci;f.dataset.k=k;f.style.boxShadow='inset 0 0 0 3px #0d0d0d';f.style.borderRadius='9px'}e.appendChild(f)}c.el=e;cube.appendChild(e);place(c)});
+let VM=mul((a=>{a*=Math.PI/180;const c=Math.cos(a),s=Math.sin(a);return [[1,0,0],[0,c,-s],[0,s,c]]})(-28),(a=>{a*=Math.PI/180;const c=Math.cos(a),s=Math.sin(a);return [[c,0,s],[0,1,0],[-s,0,c]]})(-38)),zoom=1;
+const RXf=a=>{a*=Math.PI/180;const c=Math.cos(a),s=Math.sin(a);return [[1,0,0],[0,c,-s],[0,s,c]]},RYf=a=>{a*=Math.PI/180;const c=Math.cos(a),s=Math.sin(a);return [[c,0,s],[0,1,0],[-s,0,c]]};
+const NRM={U:[0,-1,0],D:[0,1,0],L:[-1,0,0],R:[1,0,0],F:[0,0,1],B:[0,0,-1]},OPP={U:'D',D:'U',L:'R',R:'L',F:'B',B:'F'},AX={U:1,D:1,L:0,R:0,F:2,B:2};
+const CN={'#f4f4f4':'White','#ffd500':'Yellow','#d62d20':'Red','#ff8a1f':'Orange','#1fa64a':'Green','#1e5fd6':'Blue'};
+function toScreen(n){return app(VM,n)}
+function roles(){const sv={},all=Object.keys(NRM);all.forEach(k=>sv[k]=toScreen(NRM[k]));
+ const best=(ks,f)=>ks.reduce((a,b)=>f(sv[b])>f(sv[a])?b:a);
+ const F=best(all,v=>v[2]),U=best(all.filter(k=>AX[k]!=AX[F]),v=>-v[1]),R=best(all.filter(k=>AX[k]!=AX[F]&&AX[k]!=AX[U]),v=>v[0]);
+ return {F,B:OPP[F],U,D:OPP[U],R,L:OPP[R]}}
+const rel=t=>roles()[t[0]]+t.slice(1);
+function facing(){const r=roles(),nm=k=>CN[colorAt(LIVE,NRM[r[k]],NRM[r[k]])]||'?';$('fr').textContent='Facing you: '+nm('F')+' · Up: '+nm('U')}
+const view=()=>{cube.style.transform=`scale(${zoom}) matrix3d(${VM[0][0]},${VM[1][0]},${VM[2][0]},0,${VM[0][1]},${VM[1][1]},${VM[2][1]},0,${VM[0][2]},${VM[1][2]},${VM[2][2]},0,0,0,0,1)`;facing()};view();
+let dr=null,sd=null;const sc=$('scene');
+function dragTurn(s,dx,dy){if(insp||busy||queue.length)return;
+ const an=s.n.findIndex(v=>v);let bd=-1e9,e=null;
+ for(let i=0;i<3;i++){if(i==an)continue;for(const sg of [1,-1]){const v=[0,0,0];v[i]=sg;const p=toScreen(v),d=p[0]*dx+p[1]*dy;if(d>bd){bd=d;e=v}}}
+ const n=s.n,w=[n[1]*e[2]-n[2]*e[1],n[2]*e[0]-n[0]*e[2],n[0]*e[1]-n[1]*e[0]],ax=w.findIndex(v=>v),l=s.c.p[ax],r=s.c.p.map((v,i)=>v+n[i]);
+ let bk=1;bd=-1e9;for(const k of [1,-1]){const m=app(rotM(ax,k),r),d=(m[0]-r[0])*e[0]+(m[1]-r[1])*e[1]+(m[2]-r[2])*e[2];if(d>bd){bd=d;bk=k}}
+ const tk=l==0?['M','E','S'][ax]:ax==0?(l>0?'R':'L'):ax==1?(l>0?'D':'U'):(l>0?'F':'B');
+ umv(tk+(bk==MV[tk][2]?'':"'"),160)}
+sc.onpointerdown=e=>{dr=[e.clientX,e.clientY];sd=null;sc.setPointerCapture(e.pointerId);const f=e.target.closest&&e.target.closest('.f');if(f&&f.dataset.s){const c=LIVE[f.dataset.i];sd={c,n:app(c.R,NRM[f.dataset.k])}}};
+sc.onpointermove=e=>{if(!dr)return;if(sd){const dx=e.clientX-dr[0],dy=e.clientY-dr[1];if(!sd.done&&Math.hypot(dx,dy)>16){sd.done=true;dragTurn(sd,dx,dy)}return}VM=mul(RXf(-(e.clientY-dr[1])*.6),mul(RYf((e.clientX-dr[0])*.6),VM));dr=[e.clientX,e.clientY];view()};
+sc.onpointerup=sc.onpointercancel=()=>{dr=null;sd=null;upNext()};
+
+/* moves, queue, history */
+let queue=[],busy=false,hist=[];
+function run(t,ms){return new Promise(res=>{const [ax,l,sg]=MV[t[0]],layer=LIVE.filter(c=>c.p[ax]==l),tot=sg*qOf(t)*90,t0=performance.now();
+ (function step(now){const u0=Math.min(1,(now-t0)/ms),u=u0*u0*(3-2*u0);layer.forEach(c=>place(c,`rotate${'XYZ'[ax]}(${tot*u}deg) `));
+  if(now-t0<ms)requestAnimationFrame(step);else{apply(LIVE,t);LIVE.forEach(c=>place(c));res()}})(t0)})}
+async function pump(){if(busy)return;busy=true;while(queue.length){const [t,ms]=queue.shift();await run(t,ms);pushHist(t);facing();if(tRun&&!queue.length&&isSolved(LIVE))stopT()}busy=false}
+const mv=(t,ms=200)=>{queue.push([t,ms]);pump()};
+let moves=0;const setMoves=n=>{moves=n;$('mvs').textContent='Moves: '+n};
+let SPEED=180;function umv(t){if(insp)return;setMoves(moves+1);mv(t,SPEED)}
+function pushHist(t){const f=t[0],q=qOf(t),l=hist[hist.length-1];if(l&&l[0]==f){l[1]=(l[1]+q)%4;if(!l[1])hist.pop()}else hist.push([f,q]);showSol()}
+const tok=([f,q])=>f+['','','2',"'"][q];
+const solution=()=>hist.slice().reverse().map(([f,q])=>tok([f,4-q]));
+function showSol(){upNext();const s=solution();$('sol').textContent=s.length?pretty(s.join(' '))+'   ('+s.length+' moves)':'Cube is solved ✓'}
+async function reset(){queue.length=0;while(busy)await new Promise(r=>setTimeout(r,16));const f=newState();LIVE.forEach((c,i)=>{c.p=f[i].p;c.R=f[i].R;place(c)});hist=[];setMoves(0);showSol()}
+
+/* scramble generator */
+function gen(n=20,r=Math.random){const F='UDLRFB',ax={U:1,D:1,L:0,R:0,F:2,B:2},o=[];while(o.length<n){const f=F[r()*6|0],p=o[o.length-1],p2=o[o.length-2];if(p&&p[0]==f)continue;if(p&&p2&&ax[p[0]]==ax[f]&&ax[p2[0]]==ax[f])continue;o.push(f+["","'","2"][r()*3|0])}return o}
+let curScr=[];
+function newScr(a=gen(),d=false){curScr=a;isDaily=d;$('scr').textContent=pretty(curScr.join(' '));const S=newState();curScr.forEach(t=>apply(S,t));$('net').innerHTML=netHTML(S)}
+async function applyScr(){await reset();curScr.forEach(t=>mv(t,70))}
+
+/* timer */
+const ST={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let tRun=false,insp=false,isDaily=false,t0=0,raf,times=[],mlog=[];
+/* Records: source of truth. Older saved solves (cl_t/cl_m) are migrated safely. */
+let recs=(function(){let r=ST.get('tw_recs',null);if(Array.isArray(r))return r.filter(x=>x&&typeof x.t==='number');
+ const t=ST.get('cl_t',[]),m=ST.get('cl_m',[]);return (Array.isArray(t)?t:[]).filter(x=>typeof x==='number').map((x,i)=>({id:'old'+i,t:x,moves:(m&&m[i])||0,date:0,dnf:false,video:false}))})();
+function syncRecs(){typeof cloudPush=='function'&&cloudPush();times=recs.filter(r=>!r.dnf).map(r=>r.t);mlog=recs.filter(r=>!r.dnf).map(r=>r.moves||0);ST.set('tw_recs',recs);ST.set('cl_t',times);ST.set('cl_m',mlog)}
+syncRecs();
+let curId=null,lastRecId=null;const vidIds=new Set();
+function addRec(d,mv){const id=curId||('r'+Date.now().toString(36));curId=null;lastRecId=id;if(recs.some(r=>r.id===id))return;recs.push({id,t:d,moves:mv,date:Date.now(),dnf:false,video:vidIds.has(id)});syncRecs()}
+/* IndexedDB video store */
+const VDB=new Promise((res,rej)=>{try{const q=indexedDB.open('twistr_videos',1);q.onupgradeneeded=()=>q.result.createObjectStore('v');q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)}catch(e){rej(e)}});VDB.catch(()=>{});
+function vTx(m,f){return VDB.then(db=>new Promise((res,rej)=>{const tx=db.transaction('v',m),r=f(tx.objectStore('v'));tx.oncomplete=()=>res(r.result);tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error)}))}
+const vPut=(id,b)=>vTx('readwrite',o=>o.put(b,id)),vGet=id=>vTx('readonly',o=>o.get(id)),vDel=id=>vTx('readwrite',o=>o.delete(id));
+
+const fmt=ms=>{const s=ms/1000;return s>=60?Math.floor(s/60)+':'+(s%60).toFixed(2).padStart(5,'0'):s.toFixed(2)};
+function tick(){$('time').textContent=fmt(performance.now()-t0);raf=requestAnimationFrame(tick)}
+function startRun(){cancelAnimationFrame(raf);insp=false;tRun=true;setMoves(0);t0=performance.now();curId='r'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);$('time').className='run';beginCameraRecording(curId);tick()}
+function startInsp(){insp=true;const i0=performance.now();$('time').className='insp';(function it(){if(!insp)return;const s=15-(performance.now()-i0)/1000;if(s<=0){startRun();return}$('time').textContent=Math.ceil(s);raf=requestAnimationFrame(it)})()}
+function toggle(){if(isDaily&&!tRun&&!insp&&!camStream){const m='Daily challenge: turn on your camera first (Enable camera on this page).';setCameraStatus(m);toast(m);return}if(insp)startRun();else if(!tRun){if($('insp').checked)startInsp();else startRun()}else stopT()}
+function stopT(){if(!tRun)return;tRun=false;cancelAnimationFrame(raf);endCameraRecording();setTimeout(()=>{if(camStream)$('cameraDisable').click()},700);const pb0=times.length?Math.min(...times):null;const d=performance.now()-t0;$('time').textContent=fmt(d);$('time').classList.remove('run');addRec(d,moves);if(pb0!=null&&d<pb0){const g=ST.get('tw_ghost',{beats:0});g.beats=(g.beats||0)+1;ST.set('tw_ghost',g);toast('Ghost beaten! New personal best. Reward: +100 XP')}if(isDaily){const b=ST.get('cl_d',{});if(b.k!=dkey){ST.set('cl_d',{k:dkey,t:d,id:lastRecId});submit(d)}showDaily()}stats();if(ST.get('tw_day_start',{}).day!==todayKey())ST.set('tw_day_start',{day:todayKey(),count:times.length-1});renderQuest();renderDaily();renderGhost();newScr()}
+function stats0(){const n=times.length;let h='<span>Solves: '+n+'</span><span>Best: '+fmt(Math.min(...times))+'</span>';
+ if(n>=5){const l=times.slice(-5).sort((a,b)=>a-b);h+='<span>Ao5: '+fmt((l[1]+l[2]+l[3])/3)+'</span>'}
+ $('stats').innerHTML=h;$('list').innerHTML=times.map((t,i)=>'<li>'+fmt(t)+'</li>').slice(-8).reverse().join('')}
+
+/* wiring */
+$('pad').innerHTML='UDLRFB'.split('').map(f=>`<button data-m="${f}">${f}</button><button data-m="${f}'">${f}’</button>`).join('');
+$('pad').onclick=e=>{const m=e.target.dataset.m;if(m)umv(rel(m),180)};
+$('bScr').onclick=()=>{newScr();applyScr()};
+$('bRes').onclick=reset;$('bNew').onclick=()=>newScr();
+$('time').onclick=toggle;
+$('bStep').onclick=()=>{const s=solution();if(s.length&&!busy&&!queue.length)mv(s[0],260)};
+$('bSolve').onclick=()=>{if(busy||queue.length)return;solution().forEach(t=>mv(t,200))};
+addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;const P=document.body.dataset.p;if(P=='home'||P=='learn'||P=='solve')return;
+ const tg=e.target&&e.target.tagName;if(e.code=='Space'&&/^(INPUT|TEXTAREA|SELECT|BUTTON|VIDEO)$/.test(tg||'')&&!(tg=='INPUT'&&e.target.type=='checkbox'&&0))return;
+ if(tg&&/^(INPUT|TEXTAREA|SELECT)$/.test(tg))return;
+ if(e.code=='Space'){e.preventDefault();if(!e.repeat&&P=='timer')toggle();return}
+ const k=e.key.toUpperCase();if(k.length==1&&'UDLRFB'.includes(k))umv(rel(k+(e.shiftKey?"'":'')),150)});
+addEventListener('keyup',e=>{if(e.code=='Space')e.preventDefault()});
+newScr();showSol();
+const dkey=(d=>d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate())(new Date());
+function rng(s){return()=>{s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const DAILY=gen(20,rng(dkey));
+var cloudT=null,cloudReady=false;
+async function cloudInit(){if(!sb||!SUSER)return;try{
+ recs.forEach(r=>{if(/^old\d+$/.test(r.id))r.id='m'+Math.random().toString(36).slice(2,10)+Date.now().toString(36)});
+ const rr=await sb.from('records').select('id,t,moves,dnf,created_at').limit(5000);if(rr.error)throw rr.error;
+ const by=new Map(recs.map(r=>[r.id,r]));rr.data.forEach(c=>{const l=by.get(c.id);if(l)l.dnf=!!c.dnf;else recs.push({id:c.id,t:+c.t,moves:c.moves||0,date:new Date(c.created_at).getTime(),dnf:!!c.dnf,video:false})});recs.sort((a,b)=>(a.date||0)-(b.date||0));syncRecs();
+ const pr=await sb.from('progress').select('data').maybeSingle(),c=(pr.data&&pr.data.data)||{};
+ const lq=ST.get('tw_q2',{done:0});if(c.q2&&(c.q2.done||0)>(lq.done||0))ST.set('tw_q2',c.q2);
+ const lg=ST.get('tw_ghost',{beats:0});if(c.ghost&&(c.ghost.beats||0)>(lg.beats||0))ST.set('tw_ghost',c.ghost);
+ const ld=ST.get('cl_d',{});if(c.d&&c.d.k==dkey&&ld.k!=dkey)ST.set('cl_d',c.d);
+ cloudReady=true;stats();renderQuest();renderDaily();renderGhost();showDaily();cloudPush(true)}catch(e){cloudReady=false}}
+function cloudPush(now){if(!sb||!SUSER||!cloudReady)return;clearTimeout(cloudT);cloudT=setTimeout(async()=>{try{const uid=SUSER.id;
+ if(recs.length)await sb.from('records').upsert(recs.slice(-1500).map(r=>({id:r.id,user_id:uid,t:r.t,moves:r.moves||0,dnf:!!r.dnf,created_at:new Date(r.date||Date.now()).toISOString()})));
+ const okr=recs.filter(r=>!r.dnf);if(okr.length&&PROF){const a5=bestAo5();await sb.from('bests').upsert({user_id:uid,name:PROF,best:Math.min(...okr.map(r=>r.t)),ao5:isFinite(a5)?a5:null,n:okr.length})}else if(!okr.length)await sb.from('bests').delete().eq('user_id',uid);
+ await sb.from('progress').upsert({user_id:uid,data:{q2:ST.get('tw_q2',{done:0}),ghost:ST.get('tw_ghost',{beats:0}),d:ST.get('cl_d',{})}})}catch(e){}},now?0:1500)}
+var PROF=null;
+function bestAo5(){const a=recs.map(r=>r.dnf?Infinity:r.t);let b=Infinity;for(let i=4;i<a.length;i++){const w=a.slice(i-4,i+1).sort((x,y)=>x-y).slice(1,4),m=(w[0]+w[1]+w[2])/3;if(m<b)b=m}return b}
+function chartSVG(){const r=recs.filter(x=>!x.dnf).slice(-30);if(r.length<2)return '<p class="hint">Record at least 2 solves to see your progress.</p>';const W=320,H=110,mx=Math.max(...r.map(x=>x.t)),mn=Math.min(...r.map(x=>x.t)),sp=(mx-mn)||1,pt=r.map((x,i)=>[8+i*(W-16)/(r.length-1),8+(x.t-mn)/sp*(H-16)]);
+ return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:420px" role="img" aria-label="Your last ${r.length} solve times"><polyline points="${pt.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ')}" fill="none" stroke="#9b5cff" stroke-width="2.5" stroke-linejoin="round"/>${pt.map(q=>`<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="2.6" fill="#ff4fba"/>`).join('')}</svg><p class="hint">Last ${r.length} solves. A higher point is a faster solve. Best ${fmt(mn)}.</p>`}
+function drawChart(){const e=$('chart');if(e)e.innerHTML='<h2 style="margin-top:16px">Progress</h2>'+chartSVG()}
+function badgeList(){const ok=recs.filter(r=>!r.dnf),b=ok.length?Math.min(...ok.map(r=>r.t)):Infinity,q=ST.get('tw_q2',{done:0}),st=ST.get('tw_daily_streak',{}).streak||0,g=ST.get('tw_ghost',{beats:0}).beats||0;
+ return [['First solve',ok.length>=1],['10 solves',ok.length>=10],['100 solves',ok.length>=100],['Under 60s',b<60000],['Under 30s',b<30000],['Ghost beaten',g>=1],['Level 5',1+Math.floor((q.done||0)/3)>=5],['7-day streak',st>=7]]}
+async function loadProfile(){try{const r=await sb.from('profiles').select('username').eq('user_id',SUSER.id).maybeSingle();PROF=r.data?r.data.username:null}catch(e){PROF=null}if(PROF)$('pname').value=PROF;else openProfile(true)}
+const AV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>';
+const escH=x=>String(x).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+function openProfile(edit){const ok=recs.filter(r=>!r.dnf),q=ST.get('tw_q2',{done:0}),a5=bestAo5(),st=ST.get('tw_daily_streak',{}).streak||0,ed=edit||!PROF;
+ $('profBody').innerHTML=`<div class="pavatar">${AV}</div>`+(ed?`<p class="hint">${PROF?'Change your username':'Choose a username for the leaderboards'} (3–16 letters, numbers or _).</p><div class="row"><input id="pUser" maxlength="16" placeholder="Username" value="${escH(PROF||'')}" style="flex:1"><button type="button" class="pri" id="pSave">Save</button>${PROF?'<button type="button" id="pCancel">Cancel</button>':''}</div>`:`<div class="pname"><b>${escH(PROF)}</b><button type="button" id="pEdit">Edit name</button></div>`)+`<p class="hint" id="pMsg" role="status" style="text-align:center">${escH(SUSER&&SUSER.email||'')}</p>
+ <p>Level <b>${1+Math.floor((q.done||0)/3)}</b> · ${q.done||0} quests · ${st}-day mission streak</p><p>Solves <b>${ok.length}</b> · Best <b>${ok.length?fmt(Math.min(...ok.map(r=>r.t))):'–'}</b> · Best Ao5 <b>${isFinite(a5)?fmt(a5):'–'}</b></p><div>${badgeList().map(([n,on])=>`<span class="bd${on?' on':''}">${n}</span>`).join('')}</div>${chartSVG()}
+ <div class="pacts"><button type="button" id="pOut">Sign out</button><button type="button" class="danger" id="pDel">Delete account</button><button type="button" class="danger solid" id="pRestart">Restart game</button></div>`;
+ if(ed){$('pSave').onclick=saveUser;if($('pCancel'))$('pCancel').onclick=()=>openProfile(false)}else $('pEdit').onclick=()=>openProfile(true);
+ $('pOut').onclick=()=>{$('profDlg').close();sb&&sb.auth.signOut()};$('pDel').onclick=deleteAccount;$('pRestart').onclick=restartGame;
+ if(!$('profDlg').open)$('profDlg').showModal()}
+async function restartGame(){if(!confirm('Restart the whole game? All your solves, quests, streaks and leaderboard entries will be erased. Your account and username stay.'))return;
+ const m=$('pMsg');if(m)m.textContent='Restarting…';
+ for(const r of recs)if(r.video)try{await vDel(r.id)}catch(e){}
+ if(sb&&SUSER)for(const t of ['records','scores','bests','progress'])try{await sb.from(t).delete().eq('user_id',SUSER.id)}catch(e){}
+ ['cl_d','cl_lb','cl_m','cl_t','tw_daily_streak','tw_day_start','tw_ghost','tw_q2','tw_recs'].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
+ location.reload()}
+async function deleteAccount(){if(!SUSER||!sb)return;if(!confirm('Delete your account and all its data permanently? This cannot be undone.'))return;
+ const id=SUSER.id,m=$('pMsg');m.textContent='Deleting…';let bad=false,gone=false;
+ for(const t of ['records','scores','bests','progress','profiles'])try{const r=await sb.from(t).delete().eq('user_id',id);if(r.error)bad=true}catch(e){bad=true}
+ try{const r=await sb.rpc('delete_user');gone=!r.error}catch(e){}
+ for(const r of recs)if(r.video)try{await vDel(r.id)}catch(e){}
+ try{localStorage.clear()}catch(e){}
+ try{await sb.auth.signOut()}catch(e){}
+ alert(gone?'Your account was deleted.':'Your data was deleted and you were signed out.'+(bad?' Some data could not be removed.':'')+' The login itself could not be removed because the delete_user function is not set up yet.');
+ location.reload()}
+async function fixBoards(){const b=ST.get('cl_d',{});
+ if(b.k==dkey&&!recs.some(r=>!r.dnf&&(b.id?r.id===b.id:r.t===b.t))){
+  ST.set('cl_d',{});ST.set('cl_lb',ST.get('cl_lb',[]).filter(x=>!(x.k===dkey&&x.t===Math.round(b.t))));
+  if(sb&&SUSER)try{await sb.from('scores').delete().eq('user_id',SUSER.id).eq('day',dkey)}catch(e){}
+  showDaily()}
+ cloudPush(true);loadBoard();setTimeout(loadBoard,2200)}
+async function saveUser(){const m=$('pMsg'),u=$('pUser').value.trim();if(!/^[A-Za-z0-9_]{3,16}$/.test(u)){m.textContent='Use 3\u201316 letters, numbers or underscores.';return}if(!SUSER)return;
+ const r=await sb.from('profiles').upsert({user_id:SUSER.id,username:u});if(r.error){m.textContent=r.error.code=='23505'?'That username is taken. Try another.':'Could not save: '+r.error.message;return}
+ PROF=u;$('pname').value=u;openProfile(false);toast('Name saved');await sb.from('scores').update({name:u}).eq('user_id',SUSER.id);cloudPush(true);loadBoard()}
+async function loadAll(){if(!sb)return;const r=await sb.from('bests').select('name,best,ao5,user_id').order('best',{ascending:true}).limit(10),o=$('lbAll');if(r.error||!o)return;o.textContent='';r.data.forEach(v=>{const li=document.createElement('li');li.textContent=(v.name||'Player')+' \u2013 '+fmt(v.best)+(v.ao5?' (Ao5 '+fmt(v.ao5)+')':'')+(SUSER&&v.user_id==SUSER.id?' (you)':'');o.appendChild(li)});if(!r.data.length){const li=document.createElement('li');li.textContent='No times yet.';o.appendChild(li)}}
+$('pClose').onclick=()=>$('profDlg').close();
+$('aForgot').onclick=async()=>{const m=$('aMsg'),email=$('aEmail').value.trim();if(!sb||!email){m.textContent='Type your email above first.';return}const r=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});m.textContent=r.error?r.error.message:'If that email has an account, a reset link is on its way.'}
+$('rSave').onclick=async()=>{const m=$('rMsg'),pw=$('rPass').value;if(pw.length<6){m.textContent='Use at least 6 characters.';return}const r=await sb.auth.updateUser({password:pw});if(r.error){m.textContent=r.error.message;return}m.textContent='Password updated.';setTimeout(()=>$('recDlg').close(),900)}
+function cloudDel(id){if(sb&&SUSER&&cloudReady)sb.from('records').delete().eq('id',id).then(()=>{})}
+function cloudClear(){if(sb&&SUSER&&cloudReady)sb.from('records').delete().eq('user_id',SUSER.id).then(()=>{})}
+function toast(m){const e=document.createElement('div');e.textContent=m;e.setAttribute('role','status');e.style.cssText='position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:99;padding:12px 18px;border-radius:12px;background:#8554ff;color:#fff;font-weight:700;box-shadow:0 8px 30px #0008';document.body.appendChild(e);setTimeout(()=>e.remove(),4500)}
+function showDaily(){const b=ST.get('cl_d',{}),dn=b.k==dkey;$('dbest').textContent=dn?'Your result: '+fmt(b.t):'Not attempted yet today';$('dailyComplete').style.display=dn?'block':'none';$('dailyComplete').textContent='Challenge already completed';$('dailyTryAgain').style.display=dn?'block':'none';$('dailyTryAgain').textContent='You can try again for practice. Repeat attempts are not added to the leaderboard.';$('bDaily').textContent=dn?'Practise again (not ranked)':'Take today\u2019s challenge';$('bDaily').classList.toggle('pri',!dn)}
+function ao(n){if(times.length<n)return null;const l=times.slice(-n).sort((a,b)=>a-b),k=Math.ceil(n*.05),m=l.slice(k,n-k);return m.reduce((a,b)=>a+b)/m.length}
+const openUrls={};
+function renderRecs(){const L=$('list');if(!L)return;drawChart();Object.values(openUrls).forEach(URL.revokeObjectURL);for(const k in openUrls)delete openUrls[k];
+ $('recNote').textContent=recs.length?recs.length+' record'+(recs.length>1?'s':'')+' ('+recs.filter(r=>r.dnf).length+' DNF). Saved in this browser only; not shared across devices.':'No records yet.';
+ L.innerHTML='';recs.slice().reverse().forEach(r=>{const d=document.createElement('div');d.className='rec';
+  const when=r.date?new Date(r.date).toLocaleString():'Date unknown (older record)';
+  d.innerHTML='<div class="top"><b class="'+(r.dnf?'dnf':'')+'">'+(r.dnf?'DNF':fmt(r.t))+'</b><span class="hint">'+(r.dnf?'DNF (was '+fmt(r.t)+') · ':'Completed · ')+when+'</span></div><div class="row"></div><div class="vslot hint">'+(r.video?'':'No video for this record.')+'</div>';
+  const row=d.querySelector('.row'),slot=d.querySelector('.vslot');
+  const btn=(t,f)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=f;row.appendChild(b);return b};
+  btn(r.dnf?'Undo DNF':'Mark DNF',()=>{r.dnf=!r.dnf;syncRecs();stats();renderQuest&&0;fixBoards()});
+  if(r.video){btn('Review video',()=>{vGet(r.id).then(b=>{if(!b){r.video=false;syncRecs();renderRecs();return}slot.innerHTML='';const v=document.createElement('video');v.controls=true;v.playsInline=true;openUrls[r.id]=URL.createObjectURL(b);v.src=openUrls[r.id];slot.appendChild(v);v.play().catch(()=>{})}).catch(()=>{slot.textContent='Video unavailable: could not read browser storage.'})});
+   btn('Delete video',()=>{if(confirm('Delete only the video for this record? The time is kept.'))vDel(r.id).catch(()=>{}).then(()=>{r.video=false;syncRecs();renderRecs()})})}
+  btn('Delete record',()=>{if(!confirm('Permanently delete this record'+(r.video?' and its video':'')+'?'))return;recs=recs.filter(x=>x.id!==r.id);cloudDel(r.id);if(r.video)vDel(r.id).catch(()=>{});syncRecs();stats();fixBoards()});
+  L.appendChild(d)})}
+function stats(){const n=times.length,f=x=>x==null?'–':fmt(x);
+ $('stats').innerHTML=[['Solves',n],['Best',n?fmt(Math.min(...times)):'–'],['Ao5',f(ao(5))],['Ao12',f(ao(12))],['Mean',n?fmt(times.reduce((a,b)=>a+b)/n):'–']].map(([a,b])=>`<div><b>${b}</b><span>${a}</span></div>`).join('');
+ renderRecs();
+ $('hbest').textContent=n?'Your best time: '+fmt(Math.min(...times)):'No solves yet'}
+const RN={F:'front',B:'back',U:'top',D:'bottom',L:'left',R:'right'},SN={M:'middle',E:'equator',S:'standing'};
+function descr(t){const f=t[0],q=qOf(t),d=q==2?'a half turn':q==3?'counter-clockwise':'clockwise';if(SN[f])return 'the '+SN[f]+' slice, '+d;const r=roles(),k=Object.keys(r).find(x=>r[x]==f);return 'the '+RN[k]+' face as you see it, '+d}
+function upNext(){const s=solution();$('nxt').textContent=s.length?'Next: '+pretty(s[0])+' — turn '+descr(s[0]):'Nothing to solve yet. Scramble the cube first.'}
+const TH={Classic:COL,Neon:{U:'#ffffff',D:'#fff200',R:'#ff2a6d',L:'#ff9a00',F:'#00e676',B:'#00b0ff'},Pastel:{U:'#fdfdfd',D:'#fff3a8',R:'#ff9aa2',L:'#ffcf9f',F:'#b5ead7',B:'#a0c4ff'},Retro:{U:'#eeeeee',D:'#e8c547',R:'#b5362f',L:'#d9772b',F:'#3c8d5a',B:'#2f5d9e'}};
+function theme(n){PAL=TH[n];document.querySelectorAll('.f[data-s]').forEach(f=>f.style.background=PAL[f.dataset.k]);newScr(curScr,isDaily)}
+function go(p){document.body.dataset.p=p;document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.go==p));zoom=p=='play'?1.35:1;view();upNext();if(p==='quest')renderQuest();if(p==='daily')renderDaily();if(p==='ghost')renderGhost();scrollTo(0,0)}
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+$('logo').onclick=()=>go('home');$('backHome').onclick=()=>go('home');
+$('bDaily').onclick=()=>{go('timer');newScr(DAILY,true);applyScr();if(!camStream)toast('The daily challenge needs your camera on. Enable it before you start.')};
+$('bClr').onclick=()=>{if(!confirm('Delete ALL records and their videos? This cannot be undone.'))return;recs.forEach(r=>{if(r.video)vDel(r.id).catch(()=>{})});cloudClear();recs=[];syncRecs();stats()};
+$('theme').onchange=e=>theme(e.target.value);
+$('spd').oninput=e=>{SPEED=480-e.target.value};
+$('dscr').textContent=pretty(DAILY.join(' '));
+let LB=null,UID=null;
+const SB_URL='https://rnnxvmncxqoczbhspqpu.supabase.co',SB_KEY='sb_publishable_XUKoZv7t6W-mlNlaoRzevg_KqTwI3bQ';
+var sb=null,SUSER=null;try{sb=supabase.createClient(SB_URL,SB_KEY)}catch(e){}
+async function setUser(u){cloudReady=false;SUSER=u||null;UID=u?u.id:null;$('acctBtn').classList.toggle('on',!!u);$('acctBtn').title=u?'Your profile':'Sign in or log in';
+ if(u){const ow=ST.get('tw_owner',null);if(ow&&ow!==u.id){recs=[];ST.set('tw_q2',{done:0});ST.set('tw_ghost',{beats:0});ST.set('cl_d',{});syncRecs()}ST.set('tw_owner',u.id);if(!$('pname').value){$('pname').value=(u.email||'Player').split('@')[0].slice(0,16)}await cloudInit();await loadProfile()}else PROF=null;
+ loadBoard()}
+async function loadBoard(){if(!sb){$('lbnote').textContent='Online features could not load. Scores are saved on this device only.';renderLocalLeaderboard();return}
+ const r=await sb.from('scores').select('name,t,user_id').eq('day',dkey).order('t',{ascending:true}).limit(10);if(r.error){$('lbnote').textContent='Leaderboard unavailable right now.';return}
+ const o=$('lb');o.textContent='';r.data.forEach(v=>{const li=document.createElement('li');li.textContent=(v.name||'Player')+' \u2013 '+fmt(v.t)+(SUSER&&v.user_id==SUSER.id?' (you)':'');o.appendChild(li)});
+ loadAll();$('lbnote').textContent=r.data.length?(SUSER?'':'Sign in to join the leaderboard.'):(SUSER?'No scores yet today. Finish the daily challenge to be first.':'Sign in, then finish the daily challenge to get on the board.')}
+async function lbInit(){if(!sb){loadBoard();return}const{data}=await sb.auth.getSession();await setUser(data.session&&data.session.user);sb.auth.onAuthStateChange((ev,ss)=>{if(ev=='PASSWORD_RECOVERY')$('recDlg').showModal();const u=ss&&ss.user;if((u&&u.id)!==(SUSER&&SUSER.id))setUser(u)});setInterval(loadBoard,30000)}
+loadAll();
+$('acctBtn').onclick=()=>{if(SUSER)openProfile(false);else{$('aMsg').textContent='';$('authDlg').showModal()}};$('aClose').onclick=()=>$('authDlg').close();
+async function authGo(up){const m=$('aMsg');if(!sb){m.textContent='Online features could not load. Check your internet connection.';return}const email=$('aEmail').value.trim(),password=$('aPass').value;if(!email||password.length<6){m.textContent='Enter an email and a password of at least 6 characters.';return}m.textContent='Please wait\u2026';
+ const r=up?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});if(r.error){m.textContent=r.error.message;return}
+ if(r.data&&r.data.session){$('authDlg').close()}else m.textContent='Account created. Check your email for a confirmation link, then log in.'}
+$('aLogin').onclick=()=>authGo(false);$('aSignup').onclick=()=>authGo(true);
+function renderLocalLeaderboard(){const scores=ST.get('cl_lb',[]).filter(x=>x.k===dkey).sort((a,b)=>a.t-b.t).slice(0,10);$('lb').innerHTML='';scores.forEach(v=>{const li=document.createElement('li');li.textContent=(v.n||'Player')+' · '+fmt(v.t);$('lb').appendChild(li)});if(!scores.length)$('lbnote').textContent='No local scores yet. Finish today’s challenge to get on the board.'}
+async function submit(t){const name=(PROF||$('pname').value||'Player').slice(0,16);if(sb&&SUSER){const r=await sb.from('scores').upsert({user_id:SUSER.id,name,day:dkey,t:Math.round(t)});if(!r.error){loadBoard();return}}const all=ST.get('cl_lb',[]);all.push({k:dkey,t:Math.round(t),n:name});ST.set('cl_lb',all);renderLocalLeaderboard()}
+$('pname').value=ST.get('cl_n','');$('pname').oninput=e=>ST.set('cl_n',e.target.value);
+
+/* Selected Twistr features: Cube Quest, Daily Missions, Beat Your Ghost */
+const QUEST_KEY='tw_quest_v1', DAILY_KEY='tw_daily_v1';
+const QUESTS=[
+ {id:'first_solve',title:'First Finish',desc:'Record your first timed solve.',xp:50,done:()=>times.length>=1},
+ {id:'three_solves',title:'Warm-Up Run',desc:'Record 3 timed solves.',xp:75,done:()=>times.length>=3},
+ {id:'five_solves',title:'Practice Streak',desc:'Record 5 timed solves.',xp:100,done:()=>times.length>=5},
+ {id:'under_sixty',title:'Under a Minute',desc:'Record a solve under 60 seconds.',xp:125,done:()=>times.some(t=>t<60000)},
+ {id:'ten_solves',title:'Getting Serious',desc:'Record 10 timed solves.',xp:150,done:()=>times.length>=10}
+];
+function questState(){return ST.get(QUEST_KEY,{claimed:[]})}
+const bar=(p,t)=>'<div class="progress-track" style="margin-top:6px"><div class="progress-fill" style="width:'+Math.min(100,p/t*100)+'%"></div></div>';
+function dayStart(){const d=new Date();d.setHours(0,0,0,0);return d.getTime()}
+function todayN(){return recs.filter(r=>!r.dnf&&r.date>=dayStart()).length}
+const median=a=>{const o=[...a].sort((x,y)=>x-y);return o.length?o[Math.floor(o.length/2)]:null};
+function okRecs(from){return recs.filter(r=>!r.dnf&&(!from||r.date>=from))}
+function ao5min(a){let b=Infinity;for(let i=4;i<a.length;i++){const w=a.slice(i-4,i+1).sort((x,y)=>x-y),m=(w[1]+w[2]+w[3])/3;if(m<b)b=m}return b}
+function mkQuest(type){const q=ST.get('tw_q2',{done:0}),L=1+Math.floor((q.done||0)/3),ok=okRecs(),best=ok.length?Math.min(...ok.map(r=>r.t)):null,ref=median(ok.slice(-10).map(r=>r.t)),o={start:Date.now(),best,ref,type},n3=3+Math.floor(L/2);
+ const g={
+ solves:()=>({target:10+2*L,xp:80,title:'Record '+(10+2*L)+' solves',desc:'Any finished solve counts.'}),
+ pb:()=>({target:1,xp:90,title:'Beat your personal best',desc:'Finish faster than '+fmt(best)+'.'}),
+ sub:()=>{const t=Math.round(ref*.97);return{thr:t,target:n3,xp:90,title:n3+' solves under '+fmt(t),desc:'A little quicker than your recent typical solve.'}},
+ beatbest:()=>{const t=Math.round(best*.97);return{thr:t,target:1,xp:120,title:'Break '+fmt(t),desc:'3% faster than your best.'}},
+ close:()=>{const t=Math.round(best*1.1);return{thr:t,target:n3,xp:80,title:n3+' solves within 10% of your best',desc:'Each one under '+fmt(t)+'.'}},
+ nodnf:()=>({target:5+L,xp:70,title:(5+L)+' solves in a row without a DNF',desc:'Stay clean and steady.'}),
+ faster:()=>({target:3,xp:90,title:'3 solves, each faster than the last',desc:'Build momentum.'}),
+ ao5:()=>{const t=Math.round(ref*.95);return{thr:t,target:1,xp:130,title:'Average of 5 under '+fmt(t),desc:'Five solves in a row; best and worst are dropped.'}},
+ total:()=>{const t=Math.ceil((ok.length+1)/25)*25;return{target:t,xp:100,title:'Reach '+t+' total solves',desc:'Your lifetime count.'}},
+ consistent:()=>({target:1,xp:100,title:'3 steady solves in a row',desc:'Three solves in a row within 10% of each other.'})};
+ return {...o,...g[type]()}}
+function nextQuest(avoid){const pool=okRecs().length<3?['solves','total']:['solves','pb','sub','beatbest','close','nodnf','faster','ao5','total','consistent'],c=pool.filter(t=>!avoid.includes(t)),l=c.length?c:pool;return mkQuest(l[Math.floor(Math.random()*l.length)])}
+function qProg(m){const r=okRecs(m.start).map(x=>x.t),all=recs.filter(x=>x.date>=m.start);switch(m.type){
+ case 'solves':return r.length;case 'total':return okRecs().length;
+ case 'pb':return m.best!=null&&r.some(t=>t<m.best)?1:0;
+ case 'beatbest':return r.some(t=>t<m.thr)?1:0;
+ case 'sub':return r.filter(t=>t<m.thr).length;case 'close':return r.filter(t=>t<=m.thr).length;
+ case 'nodnf':{let b=0,c=0;all.forEach(x=>{c=x.dnf?0:c+1;b=Math.max(b,c)});return b}
+ case 'faster':{let b=r.length?1:0,c=b;for(let i=1;i<r.length;i++){c=r[i]<r[i-1]?c+1:1;b=Math.max(b,c)}return b}
+ case 'ao5':return ao5min(all.map(x=>x.dnf?Infinity:x.t))<m.thr?1:0;
+ case 'consistent':{for(let i=2;i<r.length;i++){const w=r.slice(i-2,i+1);if(Math.max(...w)/Math.min(...w)<=1.1)return 1}return 0}
+ default:return 0}}
+function renderQuest(){
+ const q=ST.get('tw_q2',{done:0});if(!q.qs){q.qs=[];for(let i=0;i<3;i++)q.qs.push(nextQuest(q.qs.map(x=>x.type)))}
+ let again=true;while(again){again=false;q.qs.forEach((m,i)=>{if(qProg(m)>=m.target){q.done=(q.done||0)+1;q.xp=(q.xp||0)+m.xp;ST.set('tw_q2',q);q.qs[i]=nextQuest([...q.qs.map(x=>x.type),m.type]);toast('Quest complete: '+m.title+' (+'+m.xp+' XP)');}})}
+ ST.set('tw_q2',q);typeof cloudPush=='function'&&cloudPush();
+ const beats=ST.get('tw_ghost',{beats:0}).beats||0,xp=(q.xp||0)+beats*100,level=1+Math.floor((q.done||0)/3),progress=(q.done||0)%3/3*100;
+ ['questLevel','questLevelPage'].forEach(id=>{if($(id))$(id).textContent='LEVEL '+level});
+ if($('questXP'))$('questXP').textContent=xp+' XP';
+ ['questProgress','questProgressPage'].forEach(id=>{if($(id))$(id).style.width=progress+'%'});
+ if($('questSummary'))$('questSummary').textContent=(q.done||0)+' quests completed · '+(3-(q.done||0)%3)+' more to reach level '+(level+1);
+ if($('questDetail'))$('questDetail').textContent='';
+ if($('questMilestones'))$('questMilestones').innerHTML=q.qs.map(m=>{const p=Math.min(qProg(m),m.target);return '<div class="mission-row"><div style="flex:1"><b>'+m.title+'</b><div class="hint">'+m.desc+' · '+p+' / '+m.target+'</div>'+bar(p,m.target)+'</div><span class="feature-tag">+'+m.xp+' XP</span></div>'}).join('');
+}
+function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function dailyState(){const all=ST.get(DAILY_KEY,{}),key=todayKey();if(all.day!==key)return {day:key,done:[]};return all}
+function dailyMissions(){const n=()=>todayN(),g=()=>{const t=recs.filter(r=>!r.dnf&&r.date>=dayStart()).map(r=>r.t);if(!t.length)return 0;const old=recs.filter(r=>!r.dnf&&r.date<dayStart()).map(r=>r.t),all=recs.filter(r=>!r.dnf).map(r=>r.t),base=Math.min(...(old.length?old:all));return Math.min(...t)<=base*1.25?1:0};return [
+ {id:'one',title:'Warm Up',desc:'Complete 3 timed solves today.',t:3,p:n},
+ {id:'practice',title:'Keep Practising',desc:'Complete 5 timed solves today.',t:5,p:n},
+ {id:'ghost',title:'Chase Your Best',desc:'Finish one solve within 25% of your personal best.',t:1,p:g}
+].map(m=>({...m,done:()=>m.p()>=m.t}))}
+function renderDaily(){
+ const s=dailyState(),missions=dailyMissions(),done=new Set(s.done||[]);
+ missions.forEach(m=>{if(m.done())done.add(m.id)});
+ s.done=[...done];ST.set(DAILY_KEY,s);
+ if($('dailyDate'))$('dailyDate').textContent=s.day;
+ if($('dailyMissionList'))$('dailyMissionList').innerHTML=missions.map(m=>'<div class="mission-row"><input type="checkbox" disabled '+(done.has(m.id)?'checked':'')+'><div style="flex:1"><b>'+m.title+'</b><div class="hint">'+m.desc+' · '+Math.min(m.p(),m.t)+' / '+m.t+'</div>'+bar(Math.min(m.p(),m.t),m.t)+'</div></div>').join('');
+ if($('dailyProgress'))$('dailyProgress').style.width=(done.size/missions.length*100)+'%';
+ if($('dailySummary'))$('dailySummary').textContent=done.size+' of '+missions.length+' missions complete';
+ const prev=ST.get('tw_daily_streak',{}),yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+ const ykey=yesterday.getFullYear()+'-'+String(yesterday.getMonth()+1).padStart(2,'0')+'-'+String(yesterday.getDate()).padStart(2,'0');
+ let streak=prev.streak||0;
+ if(done.size===missions.length&&prev.day!==s.day){streak=prev.day===ykey?streak+1:1;ST.set('tw_daily_streak',{day:s.day,streak})}
+ if($('dailyStreak'))$('dailyStreak').textContent=(ST.get('tw_daily_streak',{}).streak||0)+'-day streak';
+}
+function renderGhost(){
+ const best=times.length?Math.min(...times):null,latest=times.length?times[times.length-1]:null;
+ if($('ghostBest'))$('ghostBest').textContent=best==null?'—':fmt(best);
+ if($('ghostLatest'))$('ghostLatest').textContent=latest==null?'—':fmt(latest);
+ if($('ghostDelta')){
+  if(best==null||latest==null)$('ghostDelta').textContent='—';
+  else {const d=latest-best;$('ghostDelta').textContent=d===0?'PB!':(d>0?'+':'−')+fmt(Math.abs(d))}
+ }
+ if($('ghostProgress'))$('ghostProgress').style.width=best&&latest?Math.max(5,Math.min(100,best/latest*100))+'%':'0%';
+ if($('ghostMessage')){
+  if(best==null)$('ghostMessage').textContent='Complete a timed solve to start your race.';
+  else if(latest===best)$('ghostMessage').textContent='New personal best! Ghost beaten. Reward: +100 XP (ghosts beaten: '+(ST.get('tw_ghost',{beats:0}).beats||0)+').';
+  else if(latest<best*1.1)$('ghostMessage').textContent='You are close to your best. One more run could do it.';
+  else $('ghostMessage').textContent='Your best is '+fmt(best)+'. Try another run and see how close you can get.';
+ }
+ if($('ghostHistory'))$('ghostHistory').innerHTML=times.slice(-6).reverse().map((t,i)=>'<div class="mission-row"><div style="flex:1"><b>Run '+(times.length-i)+'</b></div><span class="feature-tag">'+fmt(t)+'</span></div>').join('')||'<p class="hint">Your solve history will appear after your first timed run.</p>';
+}
+$('ghostRefresh').onclick=()=>{renderGhost();renderQuest();renderDaily()};
+
+/* Optional solve camera recording. Requires browser camera permission and HTTPS/localhost. */
+let camStream=null,camRecorder=null,camChunks=[],lastRecordingUrl=null,camArmed=false;
+const camPreview=$('cameraPreview'),camPlayback=$('cameraPlayback');
+function setCameraStatus(message){if($('cameraStatus'))$('cameraStatus').textContent=message}
+let zoomHW=false;
+function applyZoom(v){v=+v;$('zLabel').textContent=v.toFixed(1)+'×';$('cameraZoom').value=v;const tr=camStream&&camStream.getVideoTracks()[0];
+ if(zoomHW&&tr){tr.applyConstraints({advanced:[{zoom:v}]}).catch(()=>{});camPreview.style.transform='none'}else camPreview.style.transform='scale('+v+')'}
+async function enableCamera(){
+ try{
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error('Camera needs a supported browser and a secure page (HTTPS or localhost).');
+  camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}},audio:false});
+  $('cameraFrame').style.display='block';camPreview.style.display='block';camPreview.style.objectFit='cover';camPreview.srcObject=camStream;await camPreview.play().catch(()=>{});
+  const tr=camStream.getVideoTracks()[0],cap=tr.getCapabilities?tr.getCapabilities():{};zoomHW=!!cap.zoom;
+  if(zoomHW){$('cameraZoom').min=cap.zoom.min;$('cameraZoom').max=cap.zoom.max;$('cameraZoom').step=cap.zoom.step||.1;$('zMode').textContent='Optical/hardware zoom from your camera.'}
+  else{$('cameraZoom').min=1;$('cameraZoom').max=4;$('zMode').textContent='Digital zoom only (crops the image; no extra detail). Aspect ratio is preserved.'}
+  applyZoom($('cameraZoom').min);
+  $('cameraEnable').disabled=true;$('cameraDisable').disabled=false;
+  camArmed=true;setCameraStatus('Camera live. Frame your cube, then press Space to start. Recording begins with the timed solve.');
+ }catch(err){const n=err&&err.name;setCameraStatus(n==='NotAllowedError'?'Camera permission was denied. Allow camera access in your browser’s site settings and try again.':n==='NotFoundError'?'No camera was found on this device.':(err&&err.message)||'Could not access the camera.')}
+}
+function beginCameraRecording(id){
+ if(!camArmed||!camStream||!window.MediaRecorder)return;
+ try{
+  camChunks=[];camRecorder=new MediaRecorder(camStream);
+  camRecorder.ondataavailable=e=>{if(e.data&&e.data.size)camChunks.push(e.data)};
+  camRecorder.onstop=()=>{
+   if(!camChunks.length){setCameraStatus('No video was captured for this solve.');return}
+   const blob=new Blob(camChunks,{type:camRecorder.mimeType||'video/webm'});
+   vPut(id,blob).then(()=>{vidIds.add(id);const r=recs.find(x=>x.id===id);if(r){r.video=true;syncRecs();renderRecs()}setCameraStatus('Video saved to this browser’s storage and linked to the record.')})
+   .catch(()=>setCameraStatus('Could not save the video (browser storage may be full or blocked). The time was still recorded.'))
+  };
+  camRecorder.start();setCameraStatus('Recording this timed solve…');
+ }catch(err){setCameraStatus('Recording could not start in this browser.')}
+}
+function endCameraRecording(){if(camRecorder&&camRecorder.state!=='inactive'){camRecorder.stop()}}
+$('cameraEnable').onclick=enableCamera;
+$('cameraZoom').oninput=e=>applyZoom(e.target.value);$('zIn').onclick=()=>applyZoom(Math.min(+$('cameraZoom').max,+$('cameraZoom').value+.2));$('zOut').onclick=()=>applyZoom(Math.max(+$('cameraZoom').min,+$('cameraZoom').value-.2));
+$('cameraDisable').onclick=()=>{endCameraRecording();if(camStream)camStream.getTracks().forEach(t=>t.stop());camStream=null;camArmed=false;zoomHW=false;camPreview.srcObject=null;camPreview.style.display='none';$('cameraFrame').style.display='none';$('cameraEnable').disabled=false;$('cameraDisable').disabled=true;setCameraStatus('Camera is off.');};
+$('cameraReview').style.display='none';
+
+
+/* Physical cube colour-entry solver. Face order follows cubejs: U R F D L B. */
+const FACE_ORDER=['U','R','F','D','L','B'];
+const FACE_NAMES={U:'Up (white)',R:'Right (red)',F:'Front (green)',D:'Down (yellow)',L:'Left (orange)',B:'Back (blue)'};
+const FACE_COLORS={U:'#f4f4f4',R:'#d62d20',F:'#1fa64a',D:'#ffd500',L:'#ff8a1f',B:'#1e5fd6'};
+function buildFaceEntry(){
+ const root=$('faceEntry'); if(!root)return;
+ root.innerHTML=FACE_ORDER.map(face=>`<div class="feature-stat" style="padding:10px"><b style="font-size:14px">${FACE_NAMES[face]}</b><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:8px">${Array.from({length:9},(_,i)=>`<select aria-label="${face} sticker ${i+1}" data-face="${face}" data-index="${i}" style="width:100%;min-width:0;padding:5px 1px;border-radius:5px;background:${FACE_COLORS[face]};color:${face==='U'?'#111':'#fff'}" ${i===4?'disabled':''}>${FACE_ORDER.map(c=>`<option value="${c}" ${i===4?c===face?'selected':'':c===face?'selected':''}>${c}</option>`).join('')}</select>`).join('')}</div></div>`).join('');
+ root.querySelectorAll('select').forEach(el=>{el.onchange=()=>{el.style.background=FACE_COLORS[el.value];el.style.color=el.value==='U'?'#111':'#fff'}});
+}
+function resetPhysical(){buildFaceEntry();$('physicalStatus').textContent='Colours reset. Enter the stickers on your physical cube.';$('physicalMoves').textContent=''}
+function calculatePhysical(){
+ const els=[...$('faceEntry').querySelectorAll('select')],counts={U:0,R:0,F:0,D:0,L:0,B:0};
+ els.forEach(el=>counts[el.value]++);
+ if(Object.values(counts).some(n=>n!==9)){$('physicalStatus').textContent='Each colour must appear exactly 9 times. Check the face colours and try again.';return}
+ if(typeof Cube==='undefined'){$('physicalStatus').textContent='The solver library could not load. Check your internet connection and reload this page.';return}
+ try{
+  const facelets=FACE_ORDER.map(f=>Array.from({length:9},(_,i)=>$('faceEntry').querySelector(`[data-face="${f}"][data-index="${i}"]`).value).join('')).join('');
+  const c=Cube.fromString(facelets);
+  $('physicalStatus').textContent='Checking cube and calculating solution…';
+  setTimeout(()=>{try{Cube.initSolver();const sol=c.solve();if(!sol||sol===''){if(c.isSolved()){$('physicalStatus').textContent='This cube is already solved.';$('physicalMoves').textContent=''}else throw Error('No solution found')}else{$('physicalStatus').textContent='Solution found. Follow these moves in order:';$('physicalMoves').textContent=sol;$('physicalMoves').style.wordBreak='break-word'}}catch(e){$('physicalStatus').textContent='These colours may describe an impossible cube. Recheck each face, including sticker orientation, then try again.'}},20);
+ }catch(e){$('physicalStatus').textContent='The colour arrangement is invalid. Recheck the six faces and try again.'}
+}
+
+buildFaceEntry();$('calcPhysical').onclick=calculatePhysical;$('resetPhysical').onclick=resetPhysical;
+
+/* ===== CSS-3D cube engine (display only: no mouse/keyboard handlers, moved by code) ===== */
+const CC={U:'#f4f4f4',R:'#d62d20',F:'#1fa64a',D:'#ffd500',L:'#ff8a1f',B:'#1e5fd6'},FO='URFDLB',SOLVED=FO.split('').map(f=>f.repeat(9)).join(''),CNAME={U:'white',R:'red',F:'green',D:'yellow',L:'orange',B:'blue'};
+const THOME=(()=>{const a=[];FO.split('').forEach((f,fi)=>{for(let r=0;r<3;r++)for(let c=0;c<3;c++){let p,n;if(f=='U'){p=[c-1,-1,r-1];n=[0,-1,0]}else if(f=='D'){p=[c-1,1,1-r];n=[0,1,0]}else if(f=='F'){p=[c-1,r-1,1];n=[0,0,1]}else if(f=='B'){p=[1-c,r-1,-1];n=[0,0,-1]}else if(f=='R'){p=[1,r-1,1-c];n=[1,0,0]}else{p=[-1,r-1,c-1];n=[-1,0,0]}a[fi*9+r*3+c]={p,n}}});return a})();
+const tkey=(p,n)=>p.join()+'|'+n.join();
+function trot(v,ax,deg){const t=deg*Math.PI/180,c=Math.round(Math.cos(t)),s=Math.round(Math.sin(t)),[x,y,z]=v;return ax=='x'?[x,y*c-z*s,y*s+z*c]:ax=='y'?[x*c+z*s,y,-x*s+z*c]:[x*c-y*s,x*s+y*c,z]}
+function parseMove(m){const q=m.endsWith("'")?-1:m.endsWith('2')?2:1;let b=m.replace(/['2]/g,''),wide=false;if(b.length>1&&b.endsWith('w')){wide=true;b=b[0]}else if('udrlfb'.includes(b)){wide=true;b=b.toUpperCase()}return{b,wide,q}}
+const TMV={U:['y',[-1],-1],D:['y',[1],1],R:['x',[1],1],L:['x',[-1],-1],F:['z',[1],1],B:['z',[-1],-1],M:['x',[0],-1],E:['y',[0],1],S:['z',[0],1],x:['x',[-1,0,1],1],y:['y',[-1,0,1],-1],z:['z',[-1,0,1],1]};
+function tspec(m){const p=parseMove(m),t=TMV[p.b],ly=p.wide?[...t[1],0]:t[1];return{ax:t[0],i:'xyz'.indexOf(t[0]),ly,deg:t[2]*90*p.q}}
+function tApply(st,m){const o=tspec(m),map={};THOME.forEach((h,j)=>{let p=h.p,n=h.n;if(o.ly.includes(p[o.i])){p=trot(p,o.ax,o.deg);n=trot(n,o.ax,o.deg)}map[tkey(p,n)]=st[j]});return THOME.map(h=>map[tkey(h.p,h.n)]).join('')}
+function tMakeCube(s){const el=document.createElement('div');el.style.cssText=`position:relative;width:${s*4}px;height:${s*4}px;perspective:${s*14}px;pointer-events:none;user-select:none`;
+ const w=document.createElement('div');w.style.cssText='position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(-26deg) rotateY(-36deg)';el.appendChild(w);
+ const FT={'0,0,1':'','0,0,-1':'rotateY(180deg) ','1,0,0':'rotateY(90deg) ','-1,0,0':'rotateY(-90deg) ','0,-1,0':'rotateX(90deg) ','0,1,0':'rotateX(-90deg) '},cs=[],bd=Math.max(1.5,s*.07);
+ for(let x=-1;x<2;x++)for(let y=-1;y<2;y++)for(let z=-1;z<2;z++){const e=document.createElement('div');e.style.cssText=`position:absolute;left:50%;top:50%;width:${s}px;height:${s}px;margin:${-s/2}px 0 0 ${-s/2}px;transform-style:preserve-3d`;const fs={};
+  for(const k in FT){const f=document.createElement('div');f.style.cssText=`position:absolute;inset:0;box-sizing:border-box;border:${bd}px solid #0b0b0b;border-radius:${s*.12}px;backface-visibility:hidden;background:#0b0b0b;transform:${FT[k]}translateZ(${s/2}px)`;e.appendChild(f);fs[k]=f}
+  const c={e,p:[x,y,z],fs};cs.push(c);w.appendChild(e)}
+ const put=(c,ax,d)=>{c.e.style.transform=`rotate${ax.toUpperCase()}(${d||0}deg) translate3d(${c.p[0]*s}px,${c.p[1]*s}px,${c.p[2]*s}px)`};cs.forEach(c=>put(c,'x',0));
+ return{el,paint(st){cs.forEach(c=>{for(const k in c.fs)c.fs[k].style.background='#0b0b0b'});THOME.forEach((h,j)=>{const c=cs.find(c=>c.p.join()==h.p.join());c.fs[h.n.join()].style.background=CC[st[j]]})},
+  run(m,ms){const o=tspec(m),sel=cs.filter(c=>o.ly.includes(c.p[o.i]));sel.forEach(c=>{c.e.style.transition='none';put(c,o.ax,0)});void el.offsetWidth;sel.forEach(c=>c.e.style.transition=`transform ${ms}ms ease-in-out`);sel.forEach(c=>put(c,o.ax,o.deg));
+   return new Promise(r=>setTimeout(()=>{sel.forEach(c=>{c.e.style.transition='none';put(c,'x',0)});r()},ms+30))}}}
+const FN={U:'top',D:'bottom',R:'right',L:'left',F:'front',B:'back'};
+function describe(m){const p=parseMove(m),d=p.q==2?'a half turn (180°)':p.q<0?'counter-clockwise':'clockwise',L={M:'the middle slice between L and R, in the direction of L',E:'the middle slice between U and D, in the direction of D',S:'the slice between F and B, in the direction of F'},X={x:'R',y:'U',z:'F'};
+ if(L[p.b])return 'Turn '+L[p.b]+': '+d+'.';if(X[p.b])return 'Rotate the whole cube like '+X[p.b]+': '+d+'.';
+ return 'Turn the '+FN[p.b]+' face'+(p.wide?' and the layer behind it together':'')+': '+d+' when looking at that face.'}
+/* ===== Learn page: each cube plays its move, then rests in the resulting position ===== */
+(function(){const q=a=>a.map(x=>x+"'"),t=a=>a.map(x=>x+'2'),F=['U','D','R','L','F','B'],W=F.map(x=>x+'w'),sl=ms=>new Promise(r=>setTimeout(r,ms)),FNm={F:'front',U:'top',R:'right'};
+ const S=[['A. Basic face turns','No symbol: turn the face 90° clockwise, judged while looking directly at that face.',F],['B. Prime moves','An apostrophe is pronounced “prime” and means an inverse (counter-clockwise) turn looking at that face.',q(F)],['C. Double turns','The number 2 means two quarter-turns: a half turn (180°). Direction does not matter.',t(F)],['D. Wide turns','Twistr writes a wide turn as Uw (or lowercase u): the outer layer and the middle layer turn together. Other sources can use different conventions.',W],['E. Middle-slice moves','M turns like L, E turns like D, S turns like F.',['M','E','S']],['F. Whole-cube rotations','These turn the entire cube. x follows R, y follows U, z follows F. Add a prime to reverse or a 2 for a half turn.',['x','y','z',"x'","y'","z'",'x2','y2','z2']]];
+ const res=m=>{const a=tApply(SOLVED,m),o=[];for(const f of 'FUR'){const fi=FO.indexOf(f),ch=new Set;for(let k=0;k<9;k++)if(a[fi*9+k]!=SOLVED[fi*9+k])ch.add(CNAME[a[fi*9+k]]);if(ch.size)o.push(FNm[f]+' face now shows '+[...ch].join(' & '))}return 'Result: '+o.join('; ')+'.'};
+ $('learnRoot').innerHTML=S.map(([h,n,l])=>`<section class="card"><h2>${h}</h2><p class="hint">${n}</p><div class="lgrid">${l.map(m=>`<div class="lc" data-m="${m}"><div class="c3h"></div><b>${m.endsWith('w')?m+' / '+m[0].toLowerCase():m.replace("'",'’')}</b><span>${describe(m)}</span><span>${res(m)}</span><button type="button" class="rp">Replay</button></div>`).join('')}</div></section>`).join('');
+ const io='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);e.target._play()}}),{threshold:.5}):null;
+ document.querySelectorAll('.lc').forEach(card=>{const m=card.dataset.m,cb=tMakeCube(24);card.querySelector('.c3h').appendChild(cb.el);cb.paint(SOLVED);let busy=false;
+  card._play=async()=>{if(busy)return;busy=true;cb.paint(SOLVED);await sl(500);await cb.run(m,900);cb.paint(tApply(SOLVED,m));busy=false};
+  card.querySelector('.rp').onclick=card._play;io?io.observe(card):card._play()})})();
+/* ===== Solver: scrambled cube -> solved state or custom target pattern ===== */
+(function(){const SV=$('sv'),SWN=[['U','White'],['D','Yellow'],['F','Green'],['B','Blue'],['L','Orange'],['R','Red']],POS={U:[2,1],L:[1,2],F:[2,2],R:[3,2],B:[4,2],D:[2,3]};
+ const blank=()=>{const g=Array(54).fill('');FO.split('').forEach((f,i)=>g[i*9+4]=f);return g};
+ let sg=blank(),tg=blank(),tab='from',mode='solved',selC='U',stage=1,sol=[],states=[],idx=0,spd=4,msg='',goal=SOLVED,playing=false,busy=false;
+ const cubeObj=tMakeCube(50),sleep=ms=>new Promise(r=>setTimeout(r,ms)),idle=async()=>{while(busy)await sleep(30)},inv=m=>m.endsWith("'")?m.slice(0,-1):m.endsWith('2')?m:m+"'",dur=()=>Math.round(900/spd)+120;
+ const merge=ms=>{const o=[];ms.forEach(m=>{const f=m[0],q=m.length==1?1:m[1]=='2'?2:3,t=o[o.length-1];if(t&&t.f==f){t.q=(t.q+q)%4;if(!t.q)o.pop()}else o.push({f,q})});return o.map(x=>x.f+['','','2',"'"][x.q])};
+ const netH=(st,ed,gk='')=>'<div class="nets">'+FO.split('').map((f,fi)=>`<div class="nf" style="grid-column:${POS[f][0]};grid-row:${POS[f][1]}">`+[...Array(9)].map((_,k)=>{const i=fi*9+k,v=st[i];return `<button type="button" class="stk" ${ed&&k!=4?`data-i="${i}" data-g="${gk}"`:'disabled'} style="background:${v?CC[v]:'#2a2f4a'}" aria-label="${f} sticker ${k+1}"></button>`}).join('')+'</div>').join('')+'</div>';
+ function chk(g,w){const bl=g.filter(v=>!v).length;if(bl)return w+': '+bl+(bl>1?' stickers are':' sticker is')+' still blank. Fill every square.';const n={};g.forEach(v=>n[v]=(n[v]||0)+1);const bad=SWN.filter(([l])=>n[l]!=9).map(([l,s])=>s+': '+(n[l]||0));return bad.length?w+': each colour must appear exactly 9 times (centres included). Current counts - '+bad.join(', ')+'.':''}
+ function legal(g,w){if(typeof Cube==='undefined'||!Cube.fromString)return 'The solver library (cubejs) could not load. It needs an internet connection; reload and try again.';
+  try{const s=g.join(''),c=Cube.fromString(s),ok=(a,n)=>a.length==n&&[...a].sort((x,y)=>x-y).every((v,i)=>v==i),par=a=>{let p=0;a.forEach((x,i)=>{for(let j=i+1;j<a.length;j++)if(a[j]<x)p++});return p%2};
+   if(c.asString()!=s||!ok(c.cp,8)||!ok(c.ep,12))return w+': some pieces use colour combinations that cannot exist on a real cube (for example white next to yellow, or a repeated piece).';
+   if(c.co.reduce((a,b)=>a+b,0)%3)return w+': impossible cube, one corner is twisted in place.';
+   if(c.eo.reduce((a,b)=>a+b,0)%2)return w+': impossible cube, one edge is flipped in place.';
+   if(par(c.cp)!=par(c.ep))return w+': impossible cube, two pieces are swapped.';return ''}catch(e){return w+': these stickers do not form a legal cube.'}}
+ async function step(d){if(busy)return;const n=idx+d;if(n<0||n>sol.length)return;busy=true;await cubeObj.run(d>0?sol[idx]:inv(sol[n]),dur());cubeObj.paint(states[n]);idx=n;busy=false;rd()}
+ async function play(){if(playing||busy)return;if(idx>=sol.length){idx=0;cubeObj.paint(states[0])}playing=true;rd();while(playing&&idx<sol.length){await step(1);await sleep(120)}playing=false;rd()}
+ function solve(){const t=mode=='solved'?null:tg;let e=chk(sg,'Scrambled cube')||(t?chk(t,'Target pattern'):'')||legal(sg,'Scrambled cube')||(t?legal(t,'Target pattern'):'');
+  if(e){msg=e;rd();return}
+  msg='Calculating… the first run can take a few seconds.';rd();
+  setTimeout(()=>{try{Cube.initSolver();const one=g=>{const r=Cube.fromString(g.join('')).solve().trim();return r?r.split(/\s+/):[]},a=one(sg),b=t?one(t).reverse().map(inv):[];sol=merge([...a,...b]);const s0=sg.join('');goal=t?t.join(''):SOLVED;states=[s0];sol.forEach(m=>states.push(tApply(states[states.length-1],m)));const fi=states.indexOf(goal);if(fi<0)throw 0;sol=sol.slice(0,fi);states=states.slice(0,fi+1);idx=0;stage=3;msg=sol.length?'':'The scrambled cube already matches the target.'}catch(x){msg='Could not calculate a solution. Re-check the stickers.'}rd()},50)}
+ function rd(){let h='';
+  if(stage==1){const cu=mode=='custom';
+   h=`<p class="hint">Pick a colour, then click stickers. Centres are fixed. White on top, green facing you.</p><div class="sw">${SWN.map(([l,n])=>`<button type="button" class="swb${l==selC?' on':''}" data-c="${l}"><i style="background:${CC[l]}"></i>${n}</button>`).join('')}</div><p class="hint">Selected colour: <b>${SWN.find(x=>x[0]==selC)[1]}</b></p>
+<div class="two"><div class="pn"><h3>From: scrambled cube</h3>${netH(sg,1,'f')}<div class="row"><button type="button" id="svClrF">Clear stickers</button></div></div>
+<div class="pn"><h3>To</h3><div class="row"><button type="button" data-md="solved" class="${cu?'':'pri'}">Solved state</button><button type="button" data-md="custom" class="${cu?'pri':''}">Custom pattern</button></div>${netH(cu?tg:SOLVED,cu,'t')}<div class="row">${cu?'<button type="button" id="svClrT">Clear stickers</button><button type="button" id="svFill">Fill with solved</button>':'<span class="hint">Target is the solved cube.</span>'}</div></div></div>
+<div class="row" style="justify-content:center"><button type="button" class="pri" id="svGo">Solve: scrambled → ${cu?'pattern':'solved'}</button></div>`}
+  else{const m=sol[idx];h=`<p class="hint">${mode=='solved'?'Scrambled → solved':'Scrambled → custom pattern'} · ${idx>=sol.length?'Finished. Final cube shown.':'Move '+(idx+1)+' of '+sol.length+': <b>'+m.replace("'",'’')+'</b>'}</p><div class="chips">${sol.map((x,i)=>`<span class="chip${i==idx?' cur':i<idx?' done':''}">${x.replace("'",'’')}</span>`).join('')}</div><p class="hint">${m?describe(m):'The cube matches the target.'}</p><div class="row"><button type="button" id="svPrev">Previous</button><button type="button" id="svPlay" class="pri">Play solution</button><button type="button" id="svPause"${playing?'':' disabled'}>Pause solution</button><button type="button" id="svNx">Next</button><button type="button" id="svRest">Restart solution</button><button type="button" id="svEdit">Edit cubes</button></div><label class="hint">Speed <input type="range" id="svSp" min="1" max="10" value="${spd}"></label><div class="solv"><div id="c3slot"></div></div>${netH(states[idx],0)}`}
+  SV.innerHTML=h+`<p class="hint" role="status">${msg}</p>`;$('scard').classList.toggle('narrow',stage==3);const sp=$('svSp');if(sp)sp.oninput=e=>{spd=+e.target.value};if(stage==3){const sl=$('c3slot');if(sl){sl.appendChild(cubeObj.el);if(!busy)cubeObj.paint(states[idx])}}}
+ SV.onclick=async e=>{const b=e.target.closest('button');if(!b||b.disabled)return;if(b.dataset.c){selC=b.dataset.c;return rd()}
+  if(b.dataset.i){(b.dataset.g=='t'?tg:sg)[b.dataset.i]=selC;b.style.background=CC[selC];return}
+  if(b.dataset.md){mode=b.dataset.md;msg='';return rd()}
+  const id=b.id;if(id=='svClrF'||id=='svClrT'){const g=id=='svClrF'?sg:tg,c=blank();g.forEach((_,i)=>g[i]=c[i]);msg='';rd()}
+  else if(id=='svFill'){tg=SOLVED.split('');rd()}else if(id=='svGo')solve()
+  else if(id=='svEdit'){playing=false;await idle();stage=1;msg='';rd()}
+  else if(id=='svPrev'){playing=false;await idle();step(-1)}else if(id=='svNx'){playing=false;await idle();step(1)}
+  else if(id=='svRest'){playing=false;await idle();idx=0;cubeObj.paint(states[0]);rd()}
+  else if(id=='svPause'){playing=false;rd()}else if(id=='svPlay')play()};
+ rd()})();
+showDaily();stats();renderQuest();renderDaily();renderGhost();go('home');lbInit();
+</script></body></html>
