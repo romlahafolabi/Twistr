@@ -155,8 +155,9 @@ dialog.tw button{border-radius:999px;padding:9px 16px}
 .acct.ico{width:38px;height:38px;padding:0;border-radius:50%;display:grid;place-items:center;font-weight:700}.avatar{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:24px;font-weight:700;background:linear-gradient(145deg,#6a3df0,#d23fa8);color:#fff;flex:none}.danger{border-color:#7a2433!important;color:#ff8a9a!important;background:#2a0f18!important}.danger.solid{background:#c7243f!important;color:#fff!important;border-color:#ff5c78!important}
 dialog.tw a{color:#d5c8ff}
 #rulesDlg{width:min(94vw,520px);max-height:88vh;overflow:auto}#rulesDlg li{margin:7px 0;font-size:14px}
+.streak{display:inline-flex;align-items:center;gap:4px;margin-left:12px;font-weight:700;color:#ffb347}.streak svg{animation:flick 1.1s ease-in-out infinite;transform-origin:50% 90%}@keyframes flick{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.14,1.2) rotate(3deg)}}@media(prefers-reduced-motion:reduce){.streak svg{animation:none}}
 </style></head><body data-p="home">
-<header><h1 id="logo" title="Back to home">Twistr</h1><button id="rulesBtn" type="button" class="acct" style="margin-left:14px">Rules</button><nav id="nav"><button id="backHome" type="button" aria-label="Back to home">← Back to Home</button></nav><button id="acctBtn" type="button" class="acct ico" title="Sign in" aria-label="Sign in"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></button></header>
+<header><h1 id="logo" title="Back to home">Twistr</h1><button id="rulesBtn" type="button" class="acct" style="margin-left:14px">Rules</button><span id="streak" class="streak" title="Daily streak"><svg viewBox="0 0 24 28" width="20" height="24" aria-hidden="true"><defs><linearGradient id="flg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd24a"/><stop offset="1" stop-color="#ff3d2e"/></linearGradient></defs><path d="M12 1c1.5 5-6 8-6 15a6 6 0 0 0 12 0c0-4-2.500-5.500-3.500-9.500C13.500 8 12.500 9 12 9c.8-3 .5-5.500 0-8z" fill="url(#flg)"/><path d="M12 14c.8 2.500-2.500 3.500-2.500 6.500a2.500 2.500 0 0 0 5 0c0-2-1.500-3-2.500-6.500z" fill="#fff3b0"/></svg><b id="streakN">1</b></span><nav id="nav"><button id="backHome" type="button" aria-label="Back to home">← Back to Home</button></nav><button id="acctBtn" type="button" class="acct ico" title="Sign in" aria-label="Sign in"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></button></header>
 <div class="pg" id="pg-home"><section class="hero"><div><h2>Twist. Time. <em>Solve.</em></h2><p>Race the clock, solve any cube, learn as you go.</p></div><div class="mini"><div><i></i><i></i><i></i><i></i><i></i><i></i></div></div></section>
 <div class="tiles">
 <button class="tile" data-go="play"><b>Play</b><span>Turn a 3D cube yourself.</span></button>
@@ -173,13 +174,13 @@ dialog.tw a{color:#d5c8ff}
   <p class="hint" id="questSummary">Complete your first solve to begin your quest.</p>
   <div class="row"><button class="pri" data-go="quest">Enter Quest</button><button data-go="daily">Today's Missions</button><button data-go="ghost">Beat Your Ghost</button></div>
 </section>
-<section class="card"><h2>Daily challenge</h2><p class="hint">Same scramble for everyone today.</p><div class="mono" id="dscr"></div><div class="row"><button class="pri" id="bDaily">Take today’s challenge</button><span class="hint" id="dbest"></span></div><p id="dailyComplete" style="display:none;font-weight:700;color:#58e8ed;margin:8px 0 0">Challenge completed!</p><p id="dailyTryAgain" class="hint" style="display:none;margin-top:2px;font-size:12px">You can try again to improve your time.</p><p class="hint" id="hbest"></p></section>
+<section class="card"><h2>Daily challenge</h2><p class="hint">Same scramble for everyone today.</p><div class="mono" id="dscr"></div><div class="row"><button class="pri" id="bDaily">Take today’s challenge</button><span class="hint" id="dbest"></span></div><p id="dailyComplete" style="display:none;font-weight:700;color:#58e8ed;margin:8px 0 0">Challenge completed!</p><p id="dailyTryAgain" class="hint" style="display:none;margin-top:2px;font-size:12px">You can try again to improve your time.</p><p id="dailyReward" class="hint" style="margin:6px 0 0"></p><p class="hint" id="hbest"></p></section>
 <section class="card"><h2>Leaderboard · today</h2><p class="hint" id="lbnote">Finish today’s challenge to get on the board.</p><div class="row"><input id="pname" maxlength="16" placeholder="Your name"></div><ol id="lb"></ol></section>
 <section class="card"><h2>All-time leaderboard</h2><p class="hint">Best single solve of every player.</p><ol id="lbAll"></ol></section></div>
 <div class="pg" id="pg-learn"><div class="learn"><section class="card"><h2>Move notation guide</h2><p class="hint">White on top, green facing you. Press Replay to watch a move again.</p></section><div id="learnRoot"></div></div></div>
 <div class="pg" id="pg-quest"><div class="learn">
   <section class="feature-panel">
-    <h2 style="font-size:clamp(30px,6vw,44px)">Cube Quest</h2><p>Finish quests to earn XP and levels.</p><div class="row"><span class="feature-tag" id="questLevelPage">LEVEL 1</span><span class="feature-tag" id="questXP">0 XP</span></div>
+    <h2 style="font-size:clamp(30px,6vw,44px)">Cube Quest</h2><div class="row"><span class="feature-tag" id="questLevelPage">LEVEL 1</span><span class="feature-tag" id="questXP">0 XP</span></div>
     <div class="progress-track"><div class="progress-fill" id="questProgressPage"></div></div>
     <p id="questDetail" class="hint">Complete missions to earn XP and advance.</p>
   </section>
@@ -187,10 +188,11 @@ dialog.tw a{color:#d5c8ff}
     <h2>Quest milestones</h2>
     <div id="questMilestones"></div>
   </section>
+  <section class="feature-panel"><h2>XP history</h2><div id="xpHistory"></div></section>
 </div></div>
 <div class="pg" id="pg-daily"><div class="learn">
   <section class="feature-panel">
-    <h2 style="font-size:clamp(30px,6vw,44px)">Today's Missions</h2><p>Three small goals, reset every day.</p><div class="row"><span class="feature-tag" id="dailyDate"></span><span class="feature-tag" id="dailyStreak">0-day streak</span></div>
+    <h2 style="font-size:clamp(30px,6vw,44px)">Today's Missions</h2><div class="row"><span class="feature-tag" id="dailyStreak">0-day streak</span></div>
     <div id="dailyMissionList"></div>
     <div class="progress-track"><div class="progress-fill" id="dailyProgress"></div></div>
     <p class="hint" id="dailySummary">0 of 3 missions complete</p>
@@ -245,6 +247,7 @@ dialog.tw a{color:#d5c8ff}
 <dialog id="authDlg" class="tw"><h2 id="aTitle">Join the <em>race</em></h2><p class="hint" id="aSub"></p><label class="alab">Email<input id="aEmail" type="email" placeholder="you@example.com" autocomplete="email"></label><label class="alab">Password <button type="button" id="aShow" style="border:0;background:none;padding:0 0 0 8px;color:#d5c8ff;text-decoration:underline;font-size:12px;text-transform:none">Show</button><input id="aPass" type="password" placeholder="6+ characters" autocomplete="new-password"></label><div class="row" style="margin-top:14px"><button type="button" class="pri" id="aGo" style="width:100%;font-weight:700">Create account</button></div><p class="hint" id="aSwitch" style="text-align:center"></p><p id="aForgotP" style="margin:0;text-align:center"><button type="button" id="aForgot" style="border:0;background:none;padding:0;color:#d5c8ff;text-decoration:underline;font-size:13px">Forgot password?</button></p><p class="hint" id="aMsg" role="status"></p><div class="row"><button type="button" id="aClose">Close</button></div></dialog>
 <dialog id="profDlg" class="tw"><h2>Your <em>profile</em></h2><div id="profBody"></div><div class="row"><button type="button" id="pClose">Close</button></div></dialog>
 <dialog id="recDlg" class="tw"><h2>New <em>password</em></h2><label class="alab">New password<input id="rPass" type="password" placeholder="6+ characters" autocomplete="new-password"></label><div class="row" style="margin-top:14px"><button type="button" class="pri" id="rSave">Save password</button></div><p class="hint" id="rMsg" role="status"></p></dialog>
+<dialog id="lvlDlg" class="tw" style="text-align:center"><h2>Level <em id="lvlN">2</em>!</h2><p>Congratulations! You are climbing the ranks. Keep solving, keep questing.</p><div class="row" style="justify-content:center"><button type="button" class="pri" id="lvlOk">Keep going</button></div></dialog>
 <dialog id="rulesDlg" class="tw"><h2>Competition <em>rules</em></h2><ul style="padding-left:18px;margin:8px 0">
 <li><b>Scramble.</b> Use the scramble shown. Everyone gets the same one in the daily challenge.</li>
 <li><b>Inspection.</b> You get up to 15 seconds to look at the cube before the solve (switch it off in Timer if you prefer).</li>
@@ -253,7 +256,7 @@ dialog.tw a{color:#d5c8ff}
 <li><b>Averages.</b> Ao5 uses your last 5 solves: the fastest and slowest are dropped and the middle 3 are averaged. Ao12 does the same with 12 solves and averages the middle 10. One DNF counts as the slowest and is dropped. Two or more DNFs make the average a DNF.</li>
 <li><b>Best time.</b> Your best single solve is never dropped. It is what the leaderboards use.</li>
 <li><b>Daily challenge.</b> Your camera must be on. Your first finished attempt is ranked. If it is marked DNF or deleted, it is removed from the leaderboard and you may try again. Later attempts are practice only.</li>
-<li><b>Levels.</b> Every 1000 XP is a level. XP comes from quests, daily missions and beating your ghost (+200 XP).</li></ul>
+<li><b>Levels.</b> Every 1000 XP is a level. XP comes from quests (the most), the daily challenge reward, beating your ghost (+200 XP) and daily missions (+25 XP each). Your profile and the Quest page show an XP history.</li></ul>
 <div class="row"><button type="button" class="pri" id="rulesClose">Got it</button></div></dialog>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/cubejs@1.3.2/lib/cube.js"></script><script src="https://cdn.jsdelivr.net/npm/cubejs@1.3.2/lib/solve.js"></script>
@@ -314,7 +317,7 @@ function run(t,ms){return new Promise(res=>{const [ax,l,sg]=MV[t[0]],layer=LIVE.
 async function pump(){if(busy)return;busy=true;while(queue.length){const [t,ms]=queue.shift();await run(t,ms);pushHist(t);facing();if(tRun&&!queue.length&&isSolved(LIVE))stopT()}busy=false}
 const mv=(t,ms=200)=>{queue.push([t,ms]);pump()};
 let moves=0;const setMoves=n=>{moves=n;$('mvs').textContent='Moves: '+n};
-let SPEED=180;function umv(t){if(insp)return;setMoves(moves+1);mv(t,SPEED)}
+let SPEED=180;function umv(t){if(insp)return;setMoves(moves+1);act('play_turn');mv(t,SPEED)}
 function pushHist(t){const f=t[0],q=qOf(t),l=hist[hist.length-1];if(l&&l[0]==f){l[1]=(l[1]+q)%4;if(!l[1])hist.pop()}else hist.push([f,q]);showSol()}
 const tok=([f,q])=>f+['','','2',"'"][q];
 const solution=()=>hist.slice().reverse().map(([f,q])=>tok([f,4-q]));
@@ -347,7 +350,7 @@ function tick(){$('time').textContent=fmt(performance.now()-t0);raf=requestAnima
 function startRun(){cancelAnimationFrame(raf);insp=false;tRun=true;setMoves(0);t0=performance.now();curId='r'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);$('time').className='run';beginCameraRecording(curId);tick()}
 function startInsp(){insp=true;const i0=performance.now();$('time').className='insp';(function it(){if(!insp)return;const s=15-(performance.now()-i0)/1000;if(s<=0){startRun();return}$('time').textContent=Math.ceil(s);raf=requestAnimationFrame(it)})()}
 function toggle(){if(isDaily&&!tRun&&!insp&&!camStream){const m='Daily challenge: turn on your camera first (Enable camera on this page).';setCameraStatus(m);toast(m);return}if(insp)startRun();else if(!tRun){if($('insp').checked)startInsp();else startRun()}else stopT()}
-function stopT(){if(!tRun)return;tRun=false;cancelAnimationFrame(raf);endCameraRecording();setTimeout(()=>{if(camStream)$('cameraDisable').click()},700);const pb0=times.length?Math.min(...times):null;const d=performance.now()-t0;$('time').textContent=fmt(d);$('time').classList.remove('run');const rid0=curId;addRec(d,moves);if(pb0!=null&&d<pb0){const g=ST.get('tw_ghost',{beats:0});g.beats=(g.beats||0)+1;ST.set('tw_ghost',g);toast('Ghost beaten! New personal best. Reward: +200 XP')}if(isDaily){const b=ST.get('cl_d',{});if(b.k!=dkey){ST.set('cl_d',{k:dkey,t:d,rid:rid0});submit(d)}showDaily()}stats();if(ST.get('tw_day_start',{}).day!==todayKey())ST.set('tw_day_start',{day:todayKey(),count:times.length-1});renderQuest();renderDaily();renderGhost();newScr()}
+function stopT(){if(!tRun)return;tRun=false;cancelAnimationFrame(raf);endCameraRecording();setTimeout(()=>{if(camStream)$('cameraDisable').click()},700);const pb0=times.length?Math.min(...times):null;const d=performance.now()-t0;$('time').textContent=fmt(d);$('time').classList.remove('run');const rid0=curId,refT=times.length>=3?median(times.slice(-10)):null;if($('insp').checked)act('insp_solves');addRec(d,moves);if(pb0!=null&&d<pb0){const g=ST.get('tw_ghost',{beats:0});g.beats=(g.beats||0)+1;ST.set('tw_ghost',g);act('ghost');addXP('ghost','Beat your ghost: new personal best',200,rid0);toast('Ghost beaten! New personal best. Reward: +200 XP')}if(isDaily){const b=ST.get('cl_d',{});if(b.k!=dkey){ST.set('cl_d',{k:dkey,t:d,rid:rid0});act('daily_done');submit(d);dailyReward(d,rid0,refT)}showDaily()}stats();if(ST.get('tw_day_start',{}).day!==todayKey())ST.set('tw_day_start',{day:todayKey(),count:times.length-1});renderQuest();renderDaily();renderGhost();newScr()}
 function stats0(){const n=times.length;let h='<span>Solves: '+n+'</span><span>Best: '+fmt(Math.min(...times))+'</span>';
  if(n>=5){const l=times.slice(-5).sort((a,b)=>a-b);h+='<span>Ao5: '+fmt((l[1]+l[2]+l[3])/3)+'</span>'}
  $('stats').innerHTML=h;$('list').innerHTML=times.map((t,i)=>'<li>'+fmt(t)+'</li>').slice(-8).reverse().join('')}
@@ -378,12 +381,12 @@ async function cloudInit(){if(!sb||!SUSER)return;try{
  const pr=await sb.from('progress').select('data').maybeSingle(),c=(pr.data&&pr.data.data)||{};
  const lq=ST.get('tw_q2',{done:0});if(c.q2&&(c.q2.done||0)>(lq.done||0))ST.set('tw_q2',c.q2);
  const lg=ST.get('tw_ghost',{beats:0});if(c.ghost&&(c.ghost.beats||0)>(lg.beats||0))ST.set('tw_ghost',c.ghost);
- const ld=ST.get('cl_d',{});if(c.d&&c.d.k==dkey&&ld.k!=dkey)ST.set('cl_d',c.d);const lm=ST.get('tw_mxp',{total:0});if(c.mxp&&(c.mxp.total||0)>(lm.total||0))ST.set('tw_mxp',c.mxp);
+ const ld=ST.get('cl_d',{});if(c.d&&c.d.k==dkey&&ld.k!=dkey)ST.set('cl_d',c.d);const lm=ST.get('tw_mxp',{total:0});if(c.mxp&&(c.mxp.total||0)>(lm.total||0))ST.set('tw_mxp',c.mxp);const ll=ST.get('tw_login',{last:'',n:0}),yd=new Date();yd.setDate(yd.getDate()-1);if(c.login&&(c.login.n||0)>(ll.n||0)&&(c.login.last==dayId()||c.login.last==dayId(yd))){ST.set('tw_login',c.login);touchStreak()}const la=ST.get('tw_act',{});if(c.act){for(const k in c.act)la[k]=Math.max(la[k]||0,c.act[k]||0);ST.set('tw_act',la)}if(Array.isArray(c.xplog)){const m=new Map(xpLog().map(e=>[e.id,e]));c.xplog.forEach(e=>{const x=m.get(e.id);if(!x||(e.id=='legacy'&&e.xp>x.xp))m.set(e.id,e)});ST.set('tw_xplog',[...m.values()].sort((a,b)=>a.ts-b.ts))}
  cloudReady=true;stats();renderQuest();renderDaily();renderGhost();showDaily();cloudPush(true)}catch(e){cloudReady=false}}
 function cloudPush(now){if(!sb||!SUSER||!cloudReady)return;clearTimeout(cloudT);cloudT=setTimeout(async()=>{try{const uid=SUSER.id;
  if(recs.length)await sb.from('records').upsert(recs.slice(-1500).map(r=>({id:r.id,user_id:uid,t:r.t,moves:r.moves||0,dnf:!!r.dnf,created_at:new Date(r.date||Date.now()).toISOString()})));
  const okr=recs.filter(r=>!r.dnf);if(okr.length&&PROF){const a5=bestAo5();await sb.from('bests').upsert({user_id:uid,name:PROF,best:Math.min(...okr.map(r=>r.t)),n:okr.length})}else if(!okr.length)await sb.from('bests').delete().eq('user_id',uid);
- await sb.from('progress').upsert({user_id:uid,data:{q2:ST.get('tw_q2',{done:0}),ghost:ST.get('tw_ghost',{beats:0}),d:ST.get('cl_d',{}),mxp:ST.get('tw_mxp',{total:0})}})}catch(e){}},now?0:1500)}
+ await sb.from('progress').upsert({user_id:uid,data:{q2:ST.get('tw_q2',{done:0}),ghost:ST.get('tw_ghost',{beats:0}),d:ST.get('cl_d',{}),mxp:ST.get('tw_mxp',{total:0}),login:ST.get('tw_login',{}),act:ST.get('tw_act',{}),xplog:ST.get('tw_xplog',[])}})}catch(e){}},now?0:1500)}
 var PROF=null;
 function clearDaily(){ST.set('cl_d',{});ST.set('cl_lb',ST.get('cl_lb',[]).filter(x=>x.k!=dkey));if(sb&&SUSER)sb.from('scores').delete().eq('user_id',SUSER.id).eq('day',dkey).then(()=>loadBoard());else renderLocalLeaderboard();showDaily()}
 function unrank(r){const d=ST.get('cl_d',{});if(d.k==dkey&&(d.rid===r.id||(!d.rid&&Math.round(d.t)===Math.round(r.t))))clearDaily()}
@@ -391,24 +394,24 @@ function bestAo5(){const a=recs.map(r=>r.dnf?Infinity:r.t);let b=Infinity;for(le
 function chartSVG(){const r=recs.filter(x=>!x.dnf).slice(-30);if(r.length<2)return '<p class="hint">Record at least 2 solves to see your progress.</p>';const W=320,H=110,mx=Math.max(...r.map(x=>x.t)),mn=Math.min(...r.map(x=>x.t)),sp=(mx-mn)||1,pt=r.map((x,i)=>[8+i*(W-16)/(r.length-1),8+(x.t-mn)/sp*(H-16)]);
  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:420px" role="img" aria-label="Your last ${r.length} solve times"><polyline points="${pt.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ')}" fill="none" stroke="#9b5cff" stroke-width="2.5" stroke-linejoin="round"/>${pt.map(q=>`<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="2.6" fill="#ff4fba"/>`).join('')}</svg><p class="hint">Last ${r.length} solves. A higher point is a faster solve. Best ${fmt(mn)}.</p>`}
 function drawChart(){const e=$('chart');if(e)e.innerHTML='<h2 style="margin-top:16px">Progress</h2>'+chartSVG()}
-function badgeList(){const ok=recs.filter(r=>!r.dnf),b=ok.length?Math.min(...ok.map(r=>r.t)):Infinity,q=ST.get('tw_q2',{done:0}),st=ST.get('tw_daily_streak',{}).streak||0,g=ST.get('tw_ghost',{beats:0}).beats||0;
+function badgeList(){const ok=recs.filter(r=>!r.dnf),b=ok.length?Math.min(...ok.map(r=>r.t)):Infinity,q=ST.get('tw_q2',{done:0}),st=loginN(),g=ST.get('tw_ghost',{beats:0}).beats||0;
  return [['First solve',ok.length>=1],['10 solves',ok.length>=10],['100 solves',ok.length>=100],['Under 60s',b<60000],['Under 30s',b<30000],['Ghost beaten',g>=1],['Level 5',lvlOf(xpTotal())>=5],['7-day streak',st>=7]]}
 async function loadProfile(){try{const r=await sb.from('profiles').select('username').eq('user_id',SUSER.id).maybeSingle();PROF=r.data?r.data.username:null}catch(e){PROF=null}if(PROF)$('pname').value=PROF;updateAcct();if(!PROF)openProfile(true)}
 var USERSVG='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>',EDITN=false;
 function updateAcct(){const b=$('acctBtn');if(SUSER){b.textContent=((PROF||SUSER.email||'?')[0]||'?').toUpperCase();b.title='Profile';b.setAttribute('aria-label','Open profile')}else{b.innerHTML=USERSVG;b.title='Sign in';b.setAttribute('aria-label','Sign in')}}
 function openProfile(first){EDITN=!!first||!PROF;renderProfile(first);if(!$('profDlg').open)$('profDlg').showModal()}
-function renderProfile(first){if(!SUSER)return;const ok=recs.filter(r=>!r.dnf),q=ST.get('tw_q2',{done:0}),a5=bestAo5(),st=ST.get('tw_daily_streak',{}).streak||0,nm=PROF||'';
+function renderProfile(first){if(!SUSER)return;const ok=recs.filter(r=>!r.dnf),q=ST.get('tw_q2',{done:0}),a5=bestAo5(),st=loginN(),nm=PROF||'';
  const head=EDITN?`<p class="hint">${first||!PROF?'Choose a username for the leaderboards (3\u201316 letters, numbers or _).':'Change your username.'}</p><div class="row"><input id="pUser" maxlength="16" placeholder="Username" style="flex:1"><button type="button" class="pri" id="pSave">Save</button>${PROF?'<button type="button" id="pCancel">Cancel</button>':''}</div><p class="hint" id="pMsg" role="status"></p>`:`<div class="row" style="align-items:center;gap:12px"><div class="avatar" id="pAv"></div><div style="flex:1;min-width:0"><div style="font-size:20px;font-weight:700" id="pName"></div><div class="hint" id="pMail"></div></div><button type="button" id="pEdit">Edit name</button></div>`;
- $('profBody').innerHTML=head+`<p>Level <b>${lvlOf(xpTotal())}</b> \u00b7 ${xpTotal()%1000} / 1000 XP \u00b7 ${q.done||0} quests \u00b7 ${st}-day mission streak</p><p>Solves <b>${ok.length}</b> \u00b7 Best <b>${ok.length?fmt(Math.min(...ok.map(r=>r.t))):'\u2013'}</b> \u00b7 Best Ao5 <b>${isFinite(a5)?fmt(a5):'\u2013'}</b></p><div>${badgeList().map(([n,on])=>`<span class="bd${on?' on':''}">${n}</span>`).join('')}</div>${chartSVG()}<div class="row" style="margin-top:14px"><button type="button" id="pOut">Sign out</button><button type="button" class="danger" id="pDel">Delete account</button><button type="button" class="danger solid" id="pRst">Restart whole game</button></div>`;
+ $('profBody').innerHTML=head+`<p>Level <b>${lvlOf(xpTotal())}</b> \u00b7 ${xpTotal()%1000} / 1000 XP \u00b7 ${q.done||0} quests \u00b7 ${st}-day streak</p><p>Solves <b>${ok.length}</b> \u00b7 Best <b>${ok.length?fmt(Math.min(...ok.map(r=>r.t))):'\u2013'}</b> \u00b7 Best Ao5 <b>${isFinite(a5)?fmt(a5):'\u2013'}</b></p><div>${badgeList().map(([n,on])=>`<span class="bd${on?' on':''}">${n}</span>`).join('')}</div>${chartSVG()}<h3 style="margin:12px 0 4px;font-size:15px">XP history</h3><div style="max-height:200px;overflow:auto">${xpHistoryHTML(12)}</div><div class="row" style="margin-top:14px"><button type="button" id="pOut">Sign out</button><button type="button" class="danger" id="pDel">Delete account</button><button type="button" class="danger solid" id="pRst">Restart whole game</button></div>`;
  if(EDITN){$('pUser').value=nm;$('pSave').onclick=saveUser;if($('pCancel'))$('pCancel').onclick=()=>{EDITN=false;renderProfile()}}else{$('pAv').textContent=(nm||SUSER.email||'?')[0].toUpperCase();$('pName').textContent=nm;$('pMail').textContent=SUSER.email||'';$('pEdit').onclick=()=>{EDITN=true;renderProfile()}}
  $('pOut').onclick=()=>{$('profDlg').close();sb.auth.signOut()};$('pDel').onclick=deleteAccount;$('pRst').onclick=restartGame}
 async function saveUser(){const m=$('pMsg'),u=$('pUser').value.trim();if(!/^[A-Za-z0-9_]{3,16}$/.test(u)){m.textContent='Use 3\u201316 letters, numbers or underscores.';return}if(!SUSER)return;
  const r=await sb.from('profiles').upsert({user_id:SUSER.id,username:u});if(r.error){m.textContent=r.error.code=='23505'?'That username is taken. Try another.':'Could not save: '+r.error.message;return}
  PROF=u;$('pname').value=u;EDITN=false;updateAcct();renderProfile();toast('Username saved');await sb.from('scores').update({name:u}).eq('user_id',SUSER.id);cloudPush(true);loadBoard();loadAll()}
-function wipeLocal(){recs.forEach(r=>{if(r.video)vDel(r.id).catch(()=>{})});recs=[];ST.set('tw_q2',{done:0});ST.set('tw_ghost',{beats:0});ST.set('cl_d',{});ST.set('tw_daily_streak',{});ST.set('tw_day_start',{});ST.set('tw_mxp',{day:'',ids:[],total:0});ST.set('cl_lb',[]);syncRecs()}
+function wipeLocal(){recs.forEach(r=>{if(r.video)vDel(r.id).catch(()=>{})});recs=[];ST.set('tw_q2',{done:0});ST.set('tw_ghost',{beats:0});ST.set('cl_d',{});ST.set('tw_daily_streak',{});ST.set('tw_day_start',{});ST.set('tw_mxp',{day:'',ids:[],total:0});ST.set('tw_act',{});ST.set('tw_actd',{});ST.set('tw_xplog',[]);ST.set('tw_login',{last:'',n:0});ST.set('cl_lb',[]);syncRecs()}
 async function restartGame(){if(!confirm('Restart the whole game? All your solves, videos, quests, ghost rewards and daily result will be erased. Your account and username stay.'))return;const on=!!(sb&&SUSER);cloudReady=false;
  if(on){const u=SUSER.id;await Promise.all([sb.from('records').delete().eq('user_id',u),sb.from('scores').delete().eq('user_id',u),sb.from('bests').delete().eq('user_id',u),sb.from('progress').delete().eq('user_id',u)])}
- wipeLocal();if(on)cloudReady=true;stats();renderQuest();renderDaily();renderGhost();showDaily();loadBoard();loadAll();renderProfile();toast('Game restarted')}
+ wipeLocal();touchStreak();if(on)cloudReady=true;stats();renderQuest();renderDaily();renderGhost();showDaily();loadBoard();loadAll();renderProfile();toast('Game restarted')}
 async function deleteAccount(){if(!sb||!SUSER)return;if(!confirm('Delete your account permanently? Your login, records, scores and profile are removed and this cannot be undone.'))return;cloudReady=false;const r=await sb.rpc('delete_my_account');if(r.error){cloudReady=true;toast('Could not delete the account: '+r.error.message);return}
  wipeLocal();ST.set('tw_owner',null);await sb.auth.signOut();$('profDlg').close();toast('Your account was deleted')}
 async function loadAll(){if(!sb)return;const r=await sb.from('bests').select('name,best,ao5,user_id').order('best',{ascending:true}).limit(10),o=$('lbAll');if(r.error||!o)return;o.textContent='';r.data.forEach(v=>{const li=document.createElement('li');li.textContent=(v.name||'Player')+' \u2013 '+fmt(v.best)+(SUSER&&v.user_id==SUSER.id?' (you)':'');o.appendChild(li)});if(!r.data.length){const li=document.createElement('li');li.textContent='No times yet.';o.appendChild(li)}}
@@ -417,8 +420,15 @@ $('aForgot').onclick=async()=>{const m=$('aMsg'),email=$('aEmail').value.trim();
 $('rSave').onclick=async()=>{const m=$('rMsg'),pw=$('rPass').value;if(pw.length<6){m.textContent='Use at least 6 characters.';return}const r=await sb.auth.updateUser({password:pw});if(r.error){m.textContent=r.error.message;return}m.textContent='Password updated.';setTimeout(()=>$('recDlg').close(),900)}
 function cloudDel(id){if(sb&&SUSER&&cloudReady)sb.from('records').delete().eq('id',id).then(()=>{})}
 function cloudClear(){if(sb&&SUSER&&cloudReady)sb.from('records').delete().eq('user_id',SUSER.id).then(()=>{})}
-function toast(m){const e=document.createElement('div');e.textContent=m;e.setAttribute('role','status');e.style.cssText='position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:99;padding:12px 18px;border-radius:12px;background:#8554ff;color:#fff;font-weight:700;box-shadow:0 8px 30px #0008';document.body.appendChild(e);setTimeout(()=>e.remove(),4500)}
-function showDaily(){const b=ST.get('cl_d',{}),dn=b.k==dkey;$('dbest').textContent=dn?'Your result: '+fmt(b.t):'Not attempted yet today';$('dailyComplete').style.display=dn?'block':'none';$('dailyComplete').textContent='Challenge already completed';$('dailyTryAgain').style.display=dn?'block':'none';$('dailyTryAgain').textContent='You can try again for practice. Repeat attempts are not added to the leaderboard.';$('bDaily').textContent=dn?'Practise again (not ranked)':'Take today\u2019s challenge';$('bDaily').classList.toggle('pri',!dn)}
+function toast(m){let b=$('toastBox');if(!b){b=document.createElement('div');b.id='toastBox';b.setAttribute('role','status');b.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99;min-width:240px;max-width:min(92vw,380px);padding:16px 18px;border-radius:16px;background:linear-gradient(160deg,#2a1b66,#4a1a58);border:1px solid #9b5cff88;color:#fff;box-shadow:0 20px 70px #000b;text-align:center';b.innerHTML='<div id="toastMsgs"></div><button type="button" id="toastOk" class="pri" style="margin-top:12px">OK</button>';document.body.appendChild(b);$('toastOk').onclick=()=>b.remove()}
+ const d=document.createElement('div');d.textContent=m;d.style.cssText='margin:6px 0;font-weight:600';$('toastMsgs').appendChild(d);clearTimeout(b._t);b._t=setTimeout(()=>b.remove(),9000)}
+function showLevelUp(n){$('lvlN').textContent=n;if(!$('lvlDlg').open)$('lvlDlg').showModal()}
+function dayId(d){d=d||new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+function loginN(){return ST.get('tw_login',{}).n||0}
+function updateStreakUI(){const n=loginN();if($('streakN'))$('streakN').textContent=n;if($('streak'))$('streak').title=n+'-day streak'}
+function touchStreak(){const L=ST.get('tw_login',{last:'',n:0}),t=dayId(),y=new Date();y.setDate(y.getDate()-1);if(L.last!==t){L.n=L.last===dayId(y)?(L.n||0)+1:1;L.last=t;ST.set('tw_login',L)}updateStreakUI()}
+function act(k){const a=ST.get('tw_act',{});a[k]=(a[k]||0)+1;ST.set('tw_act',a);const d=ST.get('tw_actd',{}),t=dayId();if(d.day!==t){for(const x in d)delete d[x];d.day=t}d[k]=(d[k]||0)+1;ST.set('tw_actd',d);setTimeout(()=>{try{renderQuest();renderDaily()}catch(e){}},0);typeof cloudPush=='function'&&cloudPush()}
+function showDaily(){const b=ST.get('cl_d',{}),dn=b.k==dkey;$('dbest').textContent=dn?'Your result: '+fmt(b.t):'Not attempted yet today';$('dailyComplete').style.display=dn?'block':'none';$('dailyComplete').textContent='Challenge already completed';$('dailyTryAgain').style.display=dn?'block':'none';$('dailyTryAgain').textContent='You can try again for practice. Repeat attempts are not added to the leaderboard.';$('bDaily').textContent=dn?'Practise again (not ranked)':'Take today\u2019s challenge';$('bDaily').classList.toggle('pri',!dn);const rw=$('dailyReward');if(rw){const ref=times.length>=3?median(times.slice(-10)):120000;rw.textContent=dn?(b.reward?'Reward earned: '+b.reward.n+' (+'+b.reward.xp+' XP)':''):'Rewards: finish +50 XP \u00b7 under '+fmt(ref)+' +100 XP \u00b7 under '+fmt(ref*.9)+' +150 XP'}}
 function ao(n){if(recs.length<n)return null;const l=recs.slice(-n).map(r=>r.dnf?Infinity:r.t).sort((a,b)=>a-b).slice(1,n-1);return l.some(x=>!isFinite(x))?Infinity:l.reduce((a,b)=>a+b)/l.length}
 const openUrls={};
 function renderRecs(){const L=$('list');if(!L)return;drawChart();Object.values(openUrls).forEach(URL.revokeObjectURL);for(const k in openUrls)delete openUrls[k];
@@ -428,10 +438,10 @@ function renderRecs(){const L=$('list');if(!L)return;drawChart();Object.values(o
   d.innerHTML='<div class="top"><b class="'+(r.dnf?'dnf':'')+'">'+(r.dnf?'DNF':fmt(r.t))+'</b><span class="hint">'+(r.dnf?'DNF (was '+fmt(r.t)+') · ':'Completed · ')+when+'</span></div><div class="row"></div><div class="vslot hint">'+(r.video?'':'No video for this record.')+'</div>';
   const row=d.querySelector('.row'),slot=d.querySelector('.vslot');
   const btn=(t,f)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=f;row.appendChild(b);return b};
-  btn(r.dnf?'Undo DNF':'Mark DNF',()=>{r.dnf=!r.dnf;if(r.dnf)unrank(r);syncRecs();stats();renderQuest&&0});
+  btn(r.dnf?'Undo DNF':'Mark DNF',()=>{r.dnf=!r.dnf;if(r.dnf){unrank(r);revokeXP(r.id)}syncRecs();stats();renderQuest&&0});
   if(r.video){btn('Review video',()=>{vGet(r.id).then(b=>{if(!b){r.video=false;syncRecs();renderRecs();return}slot.innerHTML='';const v=document.createElement('video');v.controls=true;v.playsInline=true;openUrls[r.id]=URL.createObjectURL(b);v.src=openUrls[r.id];slot.appendChild(v);v.play().catch(()=>{})}).catch(()=>{slot.textContent='Video unavailable: could not read browser storage.'})});
    btn('Delete video',()=>{if(confirm('Delete only the video for this record? The time is kept.'))vDel(r.id).catch(()=>{}).then(()=>{r.video=false;syncRecs();renderRecs()})})}
-  btn('Delete record',()=>{if(!confirm('Permanently delete this record'+(r.video?' and its video':'')+'?'))return;unrank(r);recs=recs.filter(x=>x.id!==r.id);cloudDel(r.id);if(r.video)vDel(r.id).catch(()=>{});syncRecs();stats()});
+  btn('Delete record',()=>{if(!confirm('Permanently delete this record'+(r.video?' and its video':'')+'?'))return;unrank(r);revokeXP(r.id);recs=recs.filter(x=>x.id!==r.id);cloudDel(r.id);if(r.video)vDel(r.id).catch(()=>{});syncRecs();stats()});
   L.appendChild(d)})}
 function stats(){const n=times.length,f=x=>x==null?'–':x===Infinity?'DNF':fmt(x);
  $('stats').innerHTML=[['Solves',n],['Best',n?fmt(Math.min(...times)):'–'],['Ao5',f(ao(5))],['Ao12',f(ao(12))],['Mean',n?fmt(times.reduce((a,b)=>a+b)/n):'–']].map(([a,b])=>`<div><b>${b}</b><span>${a}</span></div>`).join('');
@@ -468,7 +478,7 @@ async function authGo(up){const m=$('aMsg');if(!sb){m.textContent='Online featur
  if(r.data&&r.data.session){ST.set('tw_seen_login',true);$('authDlg').close()}else m.textContent='Account created. Check your email for a confirmation link, then log in.'}
 var AM='signup';
 function setAuthMode(m){AM=m;const su=m=='signup';$('aTitle').innerHTML=su?'Join the <em>race</em>':'Welcome <em>back</em>';$('aSub').textContent=su?'Create an account to save your solves and join the leaderboard.':'Log in to get your records and rank back.';$('aGo').textContent=su?'Create account':'Log in';$('aSwitch').innerHTML=su?'Already have an account? <a href="#" id="aSw">Log in</a>':'Don\u2019t have an account? <a href="#" id="aSw">Create one</a>';$('aSw').onclick=e=>{e.preventDefault();setAuthMode(su?'login':'signup')};$('aForgotP').style.display=su?'none':'block';$('aPass').autocomplete=su?'new-password':'current-password';$('aMsg').textContent=''}
-$('rulesBtn').onclick=()=>$('rulesDlg').showModal();$('rulesClose').onclick=()=>$('rulesDlg').close();$('aGo').onclick=()=>authGo(AM=='signup');$('aShow').onclick=()=>{const q=$('aPass');q.type=q.type=='password'?'text':'password';$('aShow').textContent=q.type=='password'?'Show':'Hide'};setAuthMode('signup');
+$('lvlOk').onclick=()=>$('lvlDlg').close();$('rulesBtn').onclick=()=>$('rulesDlg').showModal();$('rulesClose').onclick=()=>$('rulesDlg').close();$('aGo').onclick=()=>authGo(AM=='signup');$('aShow').onclick=()=>{const q=$('aPass');q.type=q.type=='password'?'text':'password';$('aShow').textContent=q.type=='password'?'Show':'Hide'};setAuthMode('signup');
 function renderLocalLeaderboard(){const scores=ST.get('cl_lb',[]).filter(x=>x.k===dkey).sort((a,b)=>a.t-b.t).slice(0,10);$('lb').innerHTML='';scores.forEach(v=>{const li=document.createElement('li');li.textContent=(v.n||'Player')+' · '+fmt(v.t);$('lb').appendChild(li)});if(!scores.length)$('lbnote').textContent='No local scores yet. Finish today’s challenge to get on the board.'}
 async function submit(t){const name=(PROF||$('pname').value||'Player').slice(0,16);if(sb&&SUSER){const r=await sb.from('scores').upsert({user_id:SUSER.id,name,day:dkey,t:Math.round(t)});if(!r.error){loadBoard();return}}const all=ST.get('cl_lb',[]);all.push({k:dkey,t:Math.round(t),n:name});ST.set('cl_lb',all);renderLocalLeaderboard()}
 $('pname').value=ST.get('cl_n','');$('pname').oninput=e=>ST.set('cl_n',e.target.value);
@@ -487,12 +497,19 @@ const bar=(p,t)=>'<div class="progress-track" style="margin-top:6px"><div class=
 function dayStart(){const d=new Date();d.setHours(0,0,0,0);return d.getTime()}
 function todayN(){return recs.filter(r=>!r.dnf&&r.date>=dayStart()).length}
 const lvlOf=x=>1+Math.floor(x/1000),MXP={one:50,practice:75,ghost:100};
-function xpTotal(){const q=ST.get('tw_q2',{done:0});return (q.xp||0)+(ST.get('tw_ghost',{beats:0}).beats||0)*200+(ST.get('tw_mxp',{total:0}).total||0)}
-function awardMissions(){const day=todayKey(),m=ST.get('tw_mxp',{day:'',ids:[],total:0});if(m.day!==day){m.day=day;m.ids=[]}dailyMissions().forEach(x=>{if(x.done()&&!m.ids.includes(x.id)){m.ids.push(x.id);m.total=(m.total||0)+(MXP[x.id]||50);toast('Mission complete: '+x.title+' (+'+(MXP[x.id]||50)+' XP)')}});ST.set('tw_mxp',m)}
+function xpLog(){let L=ST.get('tw_xplog',null);if(!Array.isArray(L)){const q=ST.get('tw_q2',{done:0}),old=(q.xp||0)+(ST.get('tw_ghost',{beats:0}).beats||0)*200;L=old>0?[{id:'legacy',ts:Date.now(),src:'legacy',label:'XP earned before history was added',xp:old}]:[];ST.set('tw_xplog',L)}return L}
+function xpTotal(){return xpLog().reduce((a,e)=>a+e.xp,0)}
+function addXP(src,label,xp,rid){const L=xpLog();L.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),ts:Date.now(),src,label,xp,rid:rid||null});if(L.length>300){const k=L.length-299,sum=L.slice(0,k).reduce((a,e)=>a+e.xp,0);L.splice(0,k,{id:'fold'+Date.now(),ts:L[0].ts,src:'legacy',label:'Earlier XP',xp:sum})}ST.set('tw_xplog',L);typeof cloudPush=='function'&&cloudPush()}
+function revokeXP(rid){const L=xpLog(),n=L.filter(e=>e.rid!==rid);if(n.length!==L.length){ST.set('tw_xplog',n);typeof cloudPush=='function'&&cloudPush();renderQuest()}}
+function awardMissions(){const day=dayId(),m=ST.get('tw_mxp',{day:'',ids:[]});if(m.day!==day){m.day=day;m.ids=[]}m.ids=m.ids||[];dailyMissions().forEach(x=>{if(x.done()&&!m.ids.includes(x.id)){m.ids.push(x.id);addXP('mission','Mission: '+x.title,25);toast('Mission complete: '+x.title+' (+25 XP)')}});ST.set('tw_mxp',m)}
+function dailyReward(d,rid,refT){const ref=refT||120000,tier=d<ref*.9?['Gold',150]:d<ref?['Silver',100]:['Finisher',50];addXP('daily','Daily challenge: '+tier[0]+' reward',tier[1],rid);const cd=ST.get('cl_d',{});cd.reward={n:tier[0],xp:tier[1]};ST.set('cl_d',cd);toast('Daily challenge '+tier[0]+' reward: +'+tier[1]+' XP');showDaily()}
+function xpHistoryHTML(n){const L=xpLog();if(!L.length)return '<p class="hint">No XP yet. Finish a quest to start.</p>';let c=0;const run=L.map(e=>c+=e.xp),pts=run.slice(-40),esc=t=>String(t).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));let svg='';
+ if(pts.length>1){const W=320,H=80,mx=Math.max(...pts),mn=Math.min(...pts),sp=(mx-mn)||1,P=pts.map((v,i)=>(6+i*(W-12)/(pts.length-1)).toFixed(1)+','+(H-6-(v-mn)/sp*(H-12)).toFixed(1)).join(' ');svg=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:420px" role="img" aria-label="Your total XP over time"><polyline points="${P}" fill="none" stroke="#ffb347" stroke-width="2.5" stroke-linejoin="round"/></svg>`}
+ return svg+L.map((e,i)=>({e,t:run[i]})).slice(-n).reverse().map(({e,t})=>`<div class="mission-row"><div style="flex:1"><b>${e.xp>=0?'+':''}${e.xp} XP</b> \u00b7 ${esc(e.label)}<div class="hint">${new Date(e.ts).toLocaleDateString()} \u00b7 total ${t} XP</div></div></div>`).join('')}
 const median=a=>{const o=[...a].sort((x,y)=>x-y);return o.length?o[Math.floor(o.length/2)]:null};
 function okRecs(from){return recs.filter(r=>!r.dnf&&(!from||r.date>=from))}
 function ao5min(a){let b=Infinity;for(let i=4;i<a.length;i++){const w=a.slice(i-4,i+1).sort((x,y)=>x-y),m=(w[1]+w[2]+w[3])/3;if(m<b)b=m}return b}
-function mkQuest(type){const q=ST.get('tw_q2',{done:0}),L=1+Math.floor((q.done||0)/3),ok=okRecs(),best=ok.length?Math.min(...ok.map(r=>r.t)):null,ref=median(ok.slice(-10).map(r=>r.t)),o={start:Date.now(),best,ref,type},n3=3+Math.floor(L/2);
+function mkQuest(type){const q=ST.get('tw_q2',{done:0}),L=1+Math.floor((q.done||0)/3),ok=okRecs(),best=ok.length?Math.min(...ok.map(r=>r.t)):null,ref=median(ok.slice(-10).map(r=>r.t)),o={start:Date.now(),best,ref,type},A=ST.get('tw_act',{}),a=k=>({k,base:A[k]||0}),n3=3+Math.floor(L/2);
  const g={
  solves:()=>({target:10+2*L,xp:160,title:'Record '+(10+2*L)+' solves',desc:'Any finished solve counts.'}),
  pb:()=>({target:1,xp:180,title:'Beat your personal best',desc:'Finish faster than '+fmt(best)+'.'}),
@@ -503,9 +520,17 @@ function mkQuest(type){const q=ST.get('tw_q2',{done:0}),L=1+Math.floor((q.done||
  faster:()=>({target:3,xp:180,title:'3 solves, each faster than the last',desc:'Build momentum.'}),
  ao5:()=>{const t=Math.round(ref*.95);return{thr:t,target:1,xp:260,title:'Average of 5 under '+fmt(t),desc:'Five solves in a row; best and worst are dropped.'}},
  total:()=>{const t=Math.ceil((ok.length+1)/25)*25;return{target:t,xp:200,title:'Reach '+t+' total solves',desc:'Your lifetime count.'}},
- consistent:()=>({target:1,xp:200,title:'3 steady solves in a row',desc:'Three solves in a row within 10% of each other.'})};
+ consistent:()=>({target:1,xp:200,title:'3 steady solves in a row',desc:'Three solves in a row within 10% of each other.'}),
+ daily:()=>({...a('daily_done'),target:1,xp:150,title:'Complete the daily challenge',desc:'Finish today\u2019s challenge with your camera on.'}),
+ video:()=>({...a('video_saved'),target:2,xp:150,title:'Record 2 solves on camera',desc:'Enable the camera on the Timer page before you solve.'}),
+ solver:()=>({...a('solver_ok'),target:2,xp:120,title:'Use the Solver twice',desc:'Enter a cube and get its solution.'}),
+ learn:()=>({...a('learn_replay'),target:8,xp:100,title:'Study 8 moves in Learn',desc:'Press Replay on moves in the notation guide.'}),
+ play:()=>({...a('play_turn'),target:50+10*L,xp:110,title:'Make '+(50+10*L)+' turns on the Play cube',desc:'Practise on the virtual cube.'}),
+ ghost:()=>({...a('ghost'),target:1,xp:250,title:'Beat your ghost',desc:'Set a new personal best.'}),
+ streak:()=>{const t=Math.max(3,loginN()+2);return{target:t,xp:200,title:'Keep a '+t+'-day streak',desc:'Open Twistr on consecutive days.'}},
+ inspect:()=>({...a('insp_solves'),target:5,xp:130,title:'5 solves with inspection',desc:'Keep inspection on and look before you solve.'})};
  return {...o,...g[type]()}}
-function nextQuest(avoid){const pool=okRecs().length<3?['solves','total']:['solves','pb','sub','beatbest','close','nodnf','faster','ao5','total','consistent'],c=pool.filter(t=>!avoid.includes(t)),l=c.length?c:pool;return mkQuest(l[Math.floor(Math.random()*l.length)])}
+function nextQuest(avoid){const pool=okRecs().length<3?['solves','total','solver','learn','play','streak','video','daily']:['solves','pb','sub','beatbest','close','nodnf','faster','ao5','total','consistent','daily','video','solver','learn','play','ghost','streak','inspect'],c=pool.filter(t=>!avoid.includes(t)),l=c.length?c:pool;return mkQuest(l[Math.floor(Math.random()*l.length)])}
 function qProg(m){const r=okRecs(m.start).map(x=>x.t),all=recs.filter(x=>x.date>=m.start);switch(m.type){
  case 'solves':return r.length;case 'total':return okRecs().length;
  case 'pb':return m.best!=null&&r.some(t=>t<m.best)?1:0;
@@ -515,26 +540,29 @@ function qProg(m){const r=okRecs(m.start).map(x=>x.t),all=recs.filter(x=>x.date>
  case 'faster':{let b=r.length?1:0,c=b;for(let i=1;i<r.length;i++){c=r[i]<r[i-1]?c+1:1;b=Math.max(b,c)}return b}
  case 'ao5':return ao5min(all.map(x=>x.dnf?Infinity:x.t))<m.thr?1:0;
  case 'consistent':{for(let i=2;i<r.length;i++){const w=r.slice(i-2,i+1);if(Math.max(...w)/Math.min(...w)<=1.1)return 1}return 0}
- default:return 0}}
+ case 'streak':return Math.min(m.target,loginN());
+ default:return m.k?(ST.get('tw_act',{})[m.k]||0)-(m.base||0):0}}
 function renderQuest(){
- const q=ST.get('tw_q2',{done:0});if(!q.qs){q.qs=[];for(let i=0;i<3;i++)q.qs.push(nextQuest(q.qs.map(x=>x.type)))}
- let again=true;while(again){again=false;q.qs.forEach((m,i)=>{if(qProg(m)>=m.target){q.done=(q.done||0)+1;q.xp=(q.xp||0)+m.xp;ST.set('tw_q2',q);q.qs[i]=nextQuest([...q.qs.map(x=>x.type),m.type]);toast('Quest complete: '+m.title+' (+'+m.xp+' XP)');}})}
+ xpLog();const q=ST.get('tw_q2',{done:0});if(!q.qs){q.qs=[];for(let i=0;i<3;i++)q.qs.push(nextQuest(q.qs.map(x=>x.type)))}
+ let again=true;while(again){again=false;q.qs.forEach((m,i)=>{if(qProg(m)>=m.target){q.done=(q.done||0)+1;q.xp=(q.xp||0)+m.xp;addXP('quest','Quest: '+m.title,m.xp);ST.set('tw_q2',q);q.qs[i]=nextQuest([...q.qs.map(x=>x.type),m.type]);toast('Quest complete: '+m.title+' (+'+m.xp+' XP)');}})}
  ST.set('tw_q2',q);typeof cloudPush=='function'&&cloudPush();
- awardMissions();const xp=xpTotal(),level=lvlOf(xp),progress=(xp%1000)/10;if(q.lvl&&level>q.lvl)toast('Level up! You reached level '+level);q.lvl=level;ST.set('tw_q2',q);
+ awardMissions();const xp=xpTotal(),level=lvlOf(xp),progress=(xp%1000)/10;if(q.lvl&&level>q.lvl)showLevelUp(level);q.lvl=level;ST.set('tw_q2',q);
  ['questLevel','questLevelPage'].forEach(id=>{if($(id))$(id).textContent='LEVEL '+level});
- if($('questXP'))$('questXP').textContent=xp+' XP';
+ if($('questXP'))$('questXP').textContent=xp+' XP';if($('xpHistory'))$('xpHistory').innerHTML=xpHistoryHTML(30);
  ['questProgress','questProgressPage'].forEach(id=>{if($(id))$(id).style.width=progress+'%'});
  if($('questSummary'))$('questSummary').textContent=(xp%1000)+' / 1000 XP to level '+(level+1)+' · '+(q.done||0)+' quests completed';
  if($('questDetail'))$('questDetail').textContent='';
- if($('questMilestones'))$('questMilestones').innerHTML=q.qs.map(m=>{const p=Math.min(qProg(m),m.target);return '<div class="mission-row"><div style="flex:1"><b>'+m.title+'</b><div class="hint">'+m.desc+' · '+p+' / '+m.target+'</div>'+bar(p,m.target)+'</div><span class="feature-tag">+'+m.xp+' XP</span></div>'}).join('');
+ if($('questMilestones'))$('questMilestones').innerHTML=q.qs.map(m=>{const p=Math.min(qProg(m),m.target);return '<div class="mission-row"><div style="flex:1"><b>'+m.title+'</b><div class="hint">'+m.desc+' · '+p+' / '+m.target+'</div>'+bar(p,m.target)+'</div><span class="feature-tag">'+(m.xp<=130?'Easy':m.xp<=200?'Medium':'Hard')+' \u00b7 +'+m.xp+' XP</span></div>'}).join('');
 }
 function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function dailyState(){const all=ST.get(DAILY_KEY,{}),key=todayKey();if(all.day!==key)return {day:key,done:[]};return all}
-function dailyMissions(){const n=()=>todayN(),g=()=>{const t=recs.filter(r=>!r.dnf&&r.date>=dayStart()).map(r=>r.t);if(!t.length)return 0;const old=recs.filter(r=>!r.dnf&&r.date<dayStart()).map(r=>r.t),all=recs.filter(r=>!r.dnf).map(r=>r.t),base=Math.min(...(old.length?old:all));return Math.min(...t)<=base*1.25?1:0};return [
- {id:'one',title:'Warm Up',desc:'Complete 3 timed solves today.',t:3,p:n},
- {id:'practice',title:'Keep Practising',desc:'Complete 5 timed solves today.',t:5,p:n},
- {id:'ghost',title:'Chase Your Best',desc:'Finish one solve within 25% of your personal best.',t:1,p:g}
-].map(m=>({...m,done:()=>m.p()>=m.t}))}
+function dailyMissions(){const seed=[...dayId()].reduce((a,c)=>a*31+c.charCodeAt(0),7)>>>0,pk=(a,o)=>a[(seed>>o)%a.length],D=ST.get('tw_actd',{}),ad=k=>D.day===dayId()?D[k]||0:0,
+ g=()=>{const t=recs.filter(r=>!r.dnf&&r.date>=dayStart()).map(r=>r.t);if(!t.length)return 0;const old=recs.filter(r=>!r.dnf&&r.date<dayStart()).map(r=>r.t),all=recs.filter(r=>!r.dnf).map(r=>r.t);return Math.min(...t)<=Math.min(...(old.length?old:all))*1.25?1:0};
+ return [
+ pk([{id:'t3',title:'Warm Up',desc:'Complete 3 timed solves on your cube.',t:3,p:todayN},{id:'t5',title:'Keep Practising',desc:'Complete 5 timed solves on your cube.',t:5,p:todayN},{id:'tb',title:'Chase Your Best',desc:'Finish one solve within 25% of your personal best.',t:1,p:g}],0),
+ pk([{id:'v',title:'Virtual Cube',desc:'Make 30 turns on the Play cube.',t:30,p:()=>ad('play_turn')},{id:'s',title:'Let the Solver Help',desc:'Get a solution from the Solver.',t:1,p:()=>ad('solver_ok')},{id:'l',title:'Study Session',desc:'Replay 5 moves in the Learn guide.',t:5,p:()=>ad('learn_replay')}],3),
+ pk([{id:'d',title:'Daily Challenge',desc:'Finish today\u2019s daily challenge with your camera on.',t:1,p:()=>ad('daily_done')},{id:'c',title:'On Camera',desc:'Record 1 solve on camera.',t:1,p:()=>ad('video_saved')},{id:'i',title:'Inspect First',desc:'Do 3 solves with inspection on.',t:3,p:()=>ad('insp_solves')}],6)
+ ].map(m=>({...m,done:()=>m.p()>=m.t}))}
 function renderDaily(){
  const s=dailyState(),missions=dailyMissions(),done=new Set(s.done||[]);
  missions.forEach(m=>{if(m.done())done.add(m.id)});
@@ -547,7 +575,7 @@ function renderDaily(){
  const ykey=yesterday.getFullYear()+'-'+String(yesterday.getMonth()+1).padStart(2,'0')+'-'+String(yesterday.getDate()).padStart(2,'0');
  let streak=prev.streak||0;
  if(done.size===missions.length&&prev.day!==s.day){streak=prev.day===ykey?streak+1:1;ST.set('tw_daily_streak',{day:s.day,streak})}
- if($('dailyStreak'))$('dailyStreak').textContent=(ST.get('tw_daily_streak',{}).streak||0)+'-day streak';
+ if($('dailyStreak'))$('dailyStreak').textContent=(loginN())+'-day streak';
 }
 function renderGhost(){
  const best=times.length?Math.min(...times):null,latest=times.length?times[times.length-1]:null;
@@ -593,7 +621,7 @@ function beginCameraRecording(id){
   camRecorder.onstop=()=>{
    if(!camChunks.length){setCameraStatus('No video was captured for this solve.');return}
    const blob=new Blob(camChunks,{type:camRecorder.mimeType||'video/webm'});
-   vPut(id,blob).then(()=>{vidIds.add(id);const r=recs.find(x=>x.id===id);if(r){r.video=true;syncRecs();renderRecs()}setCameraStatus('Video saved to this browser’s storage and linked to the record.')})
+   vPut(id,blob).then(()=>{vidIds.add(id);act('video_saved');const r=recs.find(x=>x.id===id);if(r){r.video=true;syncRecs();renderRecs()}setCameraStatus('Video saved to this browser’s storage and linked to the record.')})
    .catch(()=>setCameraStatus('Could not save the video (browser storage may be full or blocked). The time was still recorded.'))
   };
   camRecorder.start();setCameraStatus('Recording this timed solve…');
@@ -662,7 +690,7 @@ function describe(m){const p=parseMove(m),d=p.q==2?'a half turn (180°)':p.q<0?'
  const io='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);e.target._play()}}),{threshold:.5}):null;
  document.querySelectorAll('.lc').forEach(card=>{const m=card.dataset.m,cb=tMakeCube(24);card.querySelector('.c3h').appendChild(cb.el);cb.paint(SOLVED);let busy=false;
   card._play=async()=>{if(busy)return;busy=true;cb.paint(SOLVED);await sl(500);await cb.run(m,900);cb.paint(tApply(SOLVED,m));busy=false};
-  card.querySelector('.rp').onclick=card._play;io?io.observe(card):card._play()})})();
+  card.querySelector('.rp').onclick=()=>{act('learn_replay');card._play()};io?io.observe(card):card._play()})})();
 /* ===== Solver: scrambled cube -> solved state or custom target pattern ===== */
 (function(){const SV=$('sv'),SWN=[['U','White'],['D','Yellow'],['F','Green'],['B','Blue'],['L','Orange'],['R','Red']],POS={U:[2,1],L:[1,2],F:[2,2],R:[3,2],B:[4,2],D:[2,3]};
  const blank=()=>{const g=Array(54).fill('');FO.split('').forEach((f,i)=>g[i*9+4]=f);return g};
@@ -682,7 +710,7 @@ function describe(m){const p=parseMove(m),d=p.q==2?'a half turn (180°)':p.q<0?'
  function solve(){const t=mode=='solved'?null:tg;let e=chk(sg,'Scrambled cube')||(t?chk(t,'Target pattern'):'')||legal(sg,'Scrambled cube')||(t?legal(t,'Target pattern'):'');
   if(e){msg=e;rd();return}
   msg='Calculating… the first run can take a few seconds.';rd();
-  setTimeout(()=>{try{Cube.initSolver();const one=g=>{const r=Cube.fromString(g.join('')).solve().trim();return r?r.split(/\s+/):[]},a=one(sg),b=t?one(t).reverse().map(inv):[];sol=merge([...a,...b]);const s0=sg.join('');goal=t?t.join(''):SOLVED;states=[s0];sol.forEach(m=>states.push(tApply(states[states.length-1],m)));const fi=states.indexOf(goal);if(fi<0)throw 0;sol=sol.slice(0,fi);states=states.slice(0,fi+1);idx=0;stage=3;msg=sol.length?'':'The scrambled cube already matches the target.'}catch(x){msg='Could not calculate a solution. Re-check the stickers.'}rd()},50)}
+  setTimeout(()=>{try{Cube.initSolver();const one=g=>{const r=Cube.fromString(g.join('')).solve().trim();return r?r.split(/\s+/):[]},a=one(sg),b=t?one(t).reverse().map(inv):[];sol=merge([...a,...b]);const s0=sg.join('');goal=t?t.join(''):SOLVED;states=[s0];sol.forEach(m=>states.push(tApply(states[states.length-1],m)));const fi=states.indexOf(goal);if(fi<0)throw 0;sol=sol.slice(0,fi);states=states.slice(0,fi+1);act('solver_ok');idx=0;stage=3;msg=sol.length?'':'The scrambled cube already matches the target.'}catch(x){msg='Could not calculate a solution. Re-check the stickers.'}rd()},50)}
  function rd(){let h='';
   if(stage==1){const cu=mode=='custom';
    h=`<p class="hint">Pick a colour, then click stickers. Centres are fixed. White on top, green facing you.</p><div class="sw">${SWN.map(([l,n])=>`<button type="button" class="swb${l==selC?' on':''}" data-c="${l}"><i style="background:${CC[l]}"></i>${n}</button>`).join('')}</div><p class="hint">Selected colour: <b>${SWN.find(x=>x[0]==selC)[1]}</b></p>
@@ -701,5 +729,5 @@ function describe(m){const p=parseMove(m),d=p.q==2?'a half turn (180°)':p.q<0?'
   else if(id=='svRest'){playing=false;await idle();idx=0;cubeObj.paint(states[0]);rd()}
   else if(id=='svPause'){playing=false;rd()}else if(id=='svPlay')play()};
  rd()})();
-showDaily();stats();renderQuest();renderDaily();renderGhost();go('home');lbInit();
+touchStreak();showDaily();stats();renderQuest();renderDaily();renderGhost();go('home');lbInit();
 </script></body></html>
