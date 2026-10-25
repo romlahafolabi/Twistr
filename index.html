@@ -452,7 +452,7 @@ async function lbInit(){if(!sb){loadBoard();return}const{data}=await sb.auth.get
 loadAll();
 $('acctBtn').onclick=()=>{if(SUSER)openProfile(false);else{$('aMsg').textContent='';$('authDlg').showModal()}};$('aClose').onclick=()=>$('authDlg').close();
 async function authGo(up){const m=$('aMsg');if(!sb){m.textContent='Online features could not load. Check your internet connection.';return}const email=$('aEmail').value.trim(),password=$('aPass').value;if(!email||password.length<6){m.textContent='Enter an email and a password of at least 6 characters.';return}m.textContent='Please wait\u2026';
- const r=up?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});if(r.error){m.textContent=r.error.message;return}
+ const r=up?await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname.replace(/index\.html$/,'')}}):await sb.auth.signInWithPassword({email,password});if(r.error){m.textContent=r.error.message;return}
  if(r.data&&r.data.session){$('authDlg').close()}else m.textContent='Account created. Check your email for a confirmation link, then log in.'}
 $('aLogin').onclick=()=>authGo(false);$('aSignup').onclick=()=>authGo(true);
 function renderLocalLeaderboard(){const scores=ST.get('cl_lb',[]).filter(x=>x.k===dkey).sort((a,b)=>a.t-b.t).slice(0,10);$('lb').innerHTML='';scores.forEach(v=>{const li=document.createElement('li');li.textContent=(v.n||'Player')+' · '+fmt(v.t);$('lb').appendChild(li)});if(!scores.length)$('lbnote').textContent='No local scores yet. Finish today’s challenge to get on the board.'}
